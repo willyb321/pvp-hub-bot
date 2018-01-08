@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"target": "es2015",
+		"preserveConstEnums": true,
+		"removeComments": true,
+		"inlineSourceMap": true,
+		"sourceRoot": "src/",
+		"outDir": "dist/",
+		"lib": ["es2016", "dom"]
+	},
+	"include": ["src/**/*"],
+	"exclude": [
+		"node_modules"
+	]
+}
