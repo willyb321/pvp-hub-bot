@@ -21,5 +21,6 @@ export function remove(message: Discord.Message) {
 		return message.reply('User isn\'t registered.');
 	}
 	const currentUsers = currentStatus.currentUsers[message.channel.id];
-	currentStatus.currentUsers[message.channel.id].splice(currentUsers.findIndex(elem => elem.id === message.mentions.users.first().id), 1)
+	currentStatus.currentUsers[message.channel.id].splice(currentUsers.findIndex(elem => elem.id === message.mentions.users.first().id), 1);
+	message.channel.send(`:ok_hand: ${message.mentions.members.first().displayName} removed.`);
 }
