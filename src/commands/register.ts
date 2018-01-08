@@ -24,7 +24,8 @@ export function register(message: Discord.Message) {
 		if (message.channel.type !== 'text') {
 			return;
 		}
-		teamsNumber = parseInt(message.channel.name.split('v')[0]);
+		const channel: any = message.channel;
+		teamsNumber = parseInt(channel.name.split('v')[0]);
 	} catch (err) {
 		Raven.captureException(err);
 	}
