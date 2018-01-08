@@ -15,7 +15,7 @@ Raven.config(config.ravenDSN, {
 }).install();
 
 export function restart(message: Discord.Message) {
-	if (!message.member.roles.map(elem => config.allowedRoles.includes(elem))) {
+	if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 		console.log('Not restarting');
 		return;
 	}

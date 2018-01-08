@@ -16,8 +16,10 @@ export function help(message: Discord.Message) {
 		.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
 		.setTimestamp()
 		.addField('?reg[ister]', 'Register yourself.')
+		.addField('?unreg[ister]', 'Unregister yourself.')
 		.addField('?new', 'New session.')
-		.addField('?restart', 'Restart the bot.');
+		.addField('?restart', '[Mod] Restart the bot.')
+		.addField('?remove [@user]', '[Mod] Remove a user if they are AFK');
 	return message.reply({embed});
 
 }
