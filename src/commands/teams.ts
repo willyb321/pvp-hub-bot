@@ -9,6 +9,8 @@ import * as Discord from 'discord.js';
 import * as _ from 'lodash';
 import * as Raven from "raven";
 import { client } from '../index';
+import { setTimeout } from 'timers';
+import { reset } from './index';
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -71,6 +73,9 @@ export function teams(message: any, reroll?: boolean) {
 						msg.channel.send(`Teams locked in.\n${currentStatus.currentUsers[msg.channel.id].join(' ')}`);
 						currentStatus.locked[message.channel.id] = true;
 						collectors.forEach(elem => elem.cleanup());
+						setTimeout(() => {
+							reset(message, true);
+						}, 120000);
 					});
 				})
 				.catch(err => {
@@ -87,7 +92,7 @@ export function teams(message: any, reroll?: boolean) {
 	currentStatus.currentUsers[message.channel.id] = _.shuffle(currentStatus.currentUsers[message.channel.id]);
 	currentStatus.teams[message.channel.id] = _.chunk(currentStatus.currentUsers[message.channel.id], teamsNumber);
 	console.log(currentStatus.teams[message.channel.id]);
-	const embed = genEmbed(`Teams: `, `${teamsNumber} teams`);
+	const embed = genEmbed(`Teams: `, `2 teams`);
 	let teamMessage = `${currentStatus.teamsNumber[message.channel.id]} Teams:\n\n`;
 	currentStatus.teams[message.channel.id].forEach((elem, index) => {
 		let inTeam = [];
@@ -127,6 +132,9 @@ export function teams(message: any, reroll?: boolean) {
 					msg.channel.send(`Teams locked in.\n${currentStatus.currentUsers[msg.channel.id].join(' ')}`);
 					currentStatus.locked[message.channel.id] = true;
 					collectors.forEach(elem => elem.cleanup());
+					setTimeout(() => {
+						reset(message, true);
+					}, 120000);
 				});
 			})
 			.catch(err => {
