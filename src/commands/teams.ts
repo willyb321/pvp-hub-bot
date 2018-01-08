@@ -107,6 +107,7 @@ export function teams(message: any, reroll?: boolean) {
 	.then((msg: Discord.Message) => {
 		const reactionOne = '\u1F504';
 		console.log((teamsNumber*2) - (teamsNumber / 2));
+		message.channel.send(`React accordingly.\n${currentStatus.currentUsers[message.channel.id].join(' ')}`);
 		msg.react('🔄')
 		.then(() => {
 			//TODO: Fix filter.
