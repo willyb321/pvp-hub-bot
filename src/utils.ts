@@ -38,3 +38,10 @@ export const chunk = (target, size) => {
 		return memo;
 	}, [[]]);
 };
+
+export const genEmbed = (title, desc) => new Discord.RichEmbed()
+		.setTitle(title)
+		.setAuthor('PvP Hub Bot', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
+		.setDescription(desc)
+		.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
+		.setTimestamp();

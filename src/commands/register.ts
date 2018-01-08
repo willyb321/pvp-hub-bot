@@ -19,10 +19,19 @@ export function register(message: Discord.Message) {
 	if (!currentStatus.currentUsers[message.channel.id]) {
 		currentStatus.currentUsers[message.channel.id] = [];
 	}
+	let teamsNumber: number;
+	try {
+		if (message.channel.type !== 'text') {
+			return;
+		}
+		teamsNumber = parseInt(message.channel.name.split('v')[0]);
+	} catch (err) {
+		Raven.captureException(err);
+	}
 	if (!currentStatus.teams[message.channel.id]) {
 		currentStatus.teams[message.channel.id] = [];
 	}
-	let teamsNumber: number;
+
 	try {
 		if (message.channel.type !== 'text') {
 			return;
@@ -32,11 +41,16 @@ export function register(message: Discord.Message) {
 	} catch (err) {
 		Raven.captureException(err);
 	}
+
+	if (!teamsNumber) teamsNumber = 2;
+
+	currentStatus.teamsNumber[message.channel.id] = teamsNumber;
+
 	if (currentStatus.currentUsers[message.channel.id].length >= teamsNumber * 2) {
 		return message.reply('Full!');
 	} else if (!currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
 		currentStatus.currentUsers[message.channel.id].push(message.author);
-		message.reply('Added to the session');
+		message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers[message.channel.id].length} / ${currentStatus.teamsNumber[message.channel.id]*2}`);
 		if (currentStatus.currentUsers[message.channel.id].length === teamsNumber * 2) {
 			teams(message);
 		}

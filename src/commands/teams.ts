@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, currentStatus} from '../utils';
+import {config, currentStatus, genEmbed} from '../utils';
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
 import * as Raven from "raven";
@@ -87,15 +87,8 @@ export function teams(message: any, reroll?: boolean) {
 	currentStatus.currentUsers[message.channel.id] = _.shuffle(currentStatus.currentUsers[message.channel.id]);
 	currentStatus.teams[message.channel.id] = _.chunk(currentStatus.currentUsers[message.channel.id], teamsNumber);
 	console.log(currentStatus.teams[message.channel.id]);
-	const embed = new Discord.RichEmbed();
+	const embed = genEmbed(`Teams: `, `${teamsNumber} teams`);
 	let teamMessage = `${currentStatus.teamsNumber[message.channel.id]} Teams:\n\n`;
-	embed
-		.setTitle('Teams: ')
-		.setAuthor('PvP Hub Bot', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
-		.setDescription(`${teamsNumber} teams`)
-		.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
-		.setTimestamp();
-
 	currentStatus.teams[message.channel.id].forEach((elem, index) => {
 		let inTeam = [];
 		teamMessage += `Team ${index + 1}:\n`;
