@@ -15,3 +15,5 @@ export * from './unreg';
 export * from './help';
 export * from './restart';
 export * from './status';
+export * from './showgame';
+export * from './result';

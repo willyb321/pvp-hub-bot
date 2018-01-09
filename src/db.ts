@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import * as autoIncrement from 'mongoose-auto-increment';
 import * as nanoid from 'nanoid';
 import { config } from './utils';
 
@@ -9,6 +10,8 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
 	console.log('Mongo connected!');
 });
+
+autoIncrement.initialize(db);
 
 const participantsSchema = new mongoose.Schema({
 	id: String,
@@ -27,8 +30,12 @@ const matchSchema = new mongoose.Schema({
     filledTime:  {type: Date, required: true}, // ISODate string
 	result: {type: Number, required: true},  // team 1 = 1 team 2 = 2
 	teamSelectionSec: {type: Number, required: true}, // Time (in sec) spent from initial teams to teams being locked in.
-	participants: {type: [participantsSchema]}
+	participants: {type: [participantsSchema]},
+	matchNum: {type: Number, index: true}
 });
+
+
+
 export interface IMatch {
 	nanoid: string;
 	lobby: number;
@@ -41,7 +48,7 @@ export interface IMatch {
 
 
 export interface IMatchDoc extends mongoose.Document, IMatch {
-
+	matchNum: number;
 }
 
 
@@ -51,6 +58,8 @@ export interface IMatchModel extends mongoose.Model<IMatchDoc> {
 }
 
 export const Match: IMatchModel = mongoose.model('match', matchSchema);
+
+matchSchema.plugin(autoIncrement.plugin, { model: 'match', field: 'matchNum' });
 
 const wonLossSchema = new mongoose.Schema({
 	id: String,

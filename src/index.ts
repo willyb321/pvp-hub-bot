@@ -100,6 +100,15 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		return Commands.status(message);
 	}
+	if (message.content.startsWith('?showgame')) {
+		// Send "pong" to the same channel
+		return Commands.showgame(message);
+	}
+	if (message.content.startsWith('?result')) {
+		// Send "pong" to the same channel
+		return Commands.result(message);
+	}
+
 	// if (message.content.startsWith('?')) {
 	// 	return message.reply('whadiyatalkinabeet');
 	// }
