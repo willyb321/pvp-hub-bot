@@ -124,6 +124,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				console.log(reason);
 				console.log('Locking it in!');
 				msg.channel.send(`Teams locked in.\n${currentStatus.currentUsers[msg.channel.id].join(' ')}`);
+				msg.channel.send({embed: currentStatus.teamMessage[msg.channel.id]});
 				const channel: any = msg.channel;
 				let lobby;
 				try {
