@@ -24,7 +24,7 @@ export function result(message: Discord.Message) {
 		return;
 	}
 	if (!matchNum || !winningTeam) {
-		return message.reply(`Syntax: ?showgame [matchnum]. eg: ?showgame 1`)
+		return message.reply(`Syntax: ?result [matchnum] [winning team]. eg: ?result 0 1`)
 	}
 	console.time('Start query');
 	Match.findOneAndUpdate({matchNum}, {result: winningTeam})
