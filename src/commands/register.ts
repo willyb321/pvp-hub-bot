@@ -19,6 +19,9 @@ export function register(message: Discord.Message) {
 	if (!currentStatus.currentUsers[message.channel.id]) {
 		currentStatus.currentUsers[message.channel.id] = [];
 	}
+	if (!currentStatus.queueStartTimes[message.channel.id]) {
+		currentStatus.queueStartTimes[message.channel.id] = new Date();
+	}
 	let teamsNumber: number;
 	try {
 		if (message.channel.type !== 'text') {

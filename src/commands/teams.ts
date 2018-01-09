@@ -10,20 +10,23 @@ import * as _ from 'lodash';
 import * as Raven from "raven";
 import { client } from '../index';
 import { setTimeout } from 'timers';
+import * as nanoid from 'nanoid';
 import { reset } from './index';
 import * as aysync from "async";
+import { genMatchModel, IMatch, Iparticipants } from '../db';
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
 
 //TODO: Fix filter.
-const filterFunc = (reaction, msg, emoji) => currentStatus.teams[msg.channel.id].find(elem => elem.id !== reaction.message.author.id) && reaction._emoji.name === emoji;
+const filter = (reaction, msg, emoji) => currentStatus.teams[msg.channel.id].find(elem => elem.id !== reaction.message.author.id) && reaction._emoji.name === emoji;
 
-export function teams(message: any, reroll?: boolean) {
+export function teams(message: Discord.Message, reroll?: boolean) {
 	if (!currentStatus.currentUsers[message.channel.id]) {
 		currentStatus.currentUsers[message.channel.id] = [];
 	}
+
 	if (!currentStatus.locked[message.channel.id]) {
 		currentStatus.locked[message.channel.id] = false;
 	}
@@ -35,7 +38,8 @@ export function teams(message: any, reroll?: boolean) {
 		if (message.channel.type !== 'text') {
 			return;
 		}
-		teamsNumber = parseInt(message.channel.name.split('v')[0]);
+		const channel: any = message.channel;
+		teamsNumber = parseInt(channel.name.split('v')[0]);
 	} catch (err) {
 		Raven.captureException(err);
 	}
@@ -81,6 +85,10 @@ export function teams(message: any, reroll?: boolean) {
 		embed.addField(`Team ${index + 1}`, inTeam.join('\n'));
 	});
 	currentStatus.teamMessage[message.channel.id] = embed;
+	if (!currentStatus.queueTeamTimes[message.channel.id]) {
+		currentStatus.queueTeamTimes[message.channel.id] = new Date();
+	}
+	console.log(currentStatus.queueTeamTimes[message.channel.id]);
 	message.channel.send({embed: currentStatus.teamMessage[message.channel.id]})
 		.then((msg: Discord.Message) => {
 			const reactionOne = '\u1F504';
@@ -93,7 +101,7 @@ export function teams(message: any, reroll?: boolean) {
 function teamsReactionReroll(msg: Discord.Message, threshold: number) {
 	return msg.react('🔄')
 		.then(() => {
-			const reroll = new Discord.ReactionCollector(msg, (reaction => filterFunc(reaction, msg, '🔄')), {maxUsers: threshold+1});
+			const reroll = new Discord.ReactionCollector(msg, (reaction => filter(reaction, msg, '🔄')), {maxUsers: threshold+1});
 			collectors.push(reroll);
 			reroll.on('end', (reason) => {
 				console.log(reason);
@@ -110,12 +118,42 @@ function teamsReactionReroll(msg: Discord.Message, threshold: number) {
 function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 	return msg.react('✅')
 		.then(() => {
-			const reroll = new Discord.ReactionCollector(msg, (reaction => filterFunc(reaction, msg, '✅')), {maxUsers: threshold+1});
+			const reroll = new Discord.ReactionCollector(msg, (reaction => filter(reaction, msg, '✅')), {maxUsers: threshold+1});
 			collectors.push(reroll);
 			reroll.on('end', (reason) => {
 				console.log(reason);
 				console.log('Locking it in!');
 				msg.channel.send(`Teams locked in.\n${currentStatus.currentUsers[msg.channel.id].join(' ')}`);
+				const channel: any = msg.channel;
+				let lobby;
+				try {
+					lobby = channel.name;
+				} catch (err) {
+					console.log(err);
+					Raven.captureException(err);
+				}
+				const curTime: any = new Date();
+				const timeToTeam = Math.abs(new Date().getTime() - currentStatus.queueTeamTimes[msg.channel.id]) / 1000;
+				const participants: Iparticipants[] = [];
+				currentStatus.teams[msg.channel.id].forEach((elem, ind) => {
+					elem.forEach(user => {
+						participants.push({id: user.id, team: ind+1});
+					});
+				});
+				const matchInfo: IMatch = {
+					nanoid: nanoid(12),
+					lobby: lobby || 'unknown',
+					startQueue: currentStatus.queueStartTimes[msg.channel.id].toISOString(),
+					filledTime: new Date().toISOString(),
+					result: 12,
+					teamSelectionSec: timeToTeam,
+					participants: participants
+				};
+				const doc = genMatchModel(matchInfo);
+				doc.save().catch(err => {
+					console.log(err);
+					Raven.captureException(err);
+				})
 				currentStatus.locked[msg.channel.id] = true;
 				collectors.forEach(elem => elem.cleanup());
 				setTimeout(() => {

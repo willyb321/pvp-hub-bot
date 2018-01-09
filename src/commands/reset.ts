@@ -16,6 +16,8 @@ export function reset(message: Discord.Message, timeout?: boolean) {
 		currentStatus.locked[message.channel.id] = false;
 		currentStatus.teamMessage[message.channel.id] = [];
 		currentStatus.teamsNumber[message.channel.id] = [];
+		currentStatus.queueStartTimes[message.channel.id] = undefined;
+		currentStatus.queueEndTimes[message.channel.id] = undefined;
 		collectors.forEach(elem => elem.cleanup());
 		collectors.slice(0, collectors.length);
 		message.channel.send('2 mins passed since :white_check_mark: - new session created.');
@@ -27,6 +29,8 @@ export function reset(message: Discord.Message, timeout?: boolean) {
 		currentStatus.locked[message.channel.id] = false;
 		currentStatus.teamMessage[message.channel.id] = [];
 		currentStatus.teamsNumber[message.channel.id] = [];
+		currentStatus.queueStartTimes[message.channel.id] = undefined;
+		currentStatus.queueEndTimes[message.channel.id] = undefined;
 		collectors.forEach(elem => elem.cleanup());
 		collectors.slice(0, collectors.length);
 		message.reply('New session created.');
@@ -40,6 +44,8 @@ export function reset(message: Discord.Message, timeout?: boolean) {
 	currentStatus.locked[message.channel.id] = false;
 	currentStatus.teamMessage[message.channel.id] = [];
 	currentStatus.teamsNumber[message.channel.id] = [];
+	currentStatus.queueStartTimes[message.channel.id] = undefined;
+	currentStatus.queueEndTimes[message.channel.id] = undefined;
 	collectors.forEach(elem => elem.cleanup());
 	collectors.slice(0, collectors.length);
 	message.reply('New session created.');

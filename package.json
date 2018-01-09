@@ -30,6 +30,7 @@
     "mespeak": "github:willyb321/mespeak",
     "mongoose": "^5.0.0-rc2",
     "mongoose-auto-increment": "^5.0.1",
+    "nanoid": "^1.0.1",
     "nedb": "^1.8.0",
     "on-change": "^0.1.0",
     "opusscript": "0.0.6",

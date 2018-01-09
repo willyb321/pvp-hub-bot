@@ -4,11 +4,11 @@
 /**
  * ignore
  */
-import * as Datastore from 'nedb';
 import * as Discord from 'discord.js';
 import {client} from './index';
 
 export const config = require('../config.json');
+
 
 
 
@@ -18,6 +18,9 @@ export interface IcurrentStatus {
 	teamsNumber: any;
 	teamMessage: any;
 	locked: any;
+	queueStartTimes: any;
+	queueEndTimes: any;
+	queueTeamTimes: any;
 }
 
 export const currentStatus: IcurrentStatus = {
@@ -25,7 +28,10 @@ export const currentStatus: IcurrentStatus = {
 	teams: {},
 	teamsNumber: {},
 	teamMessage: {},
-	locked: {}
+	locked: {},
+	queueEndTimes: {},
+	queueStartTimes: {},
+	queueTeamTimes: {}
 };
 
 export const chunk = (target, size) => {
