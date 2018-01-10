@@ -37,5 +37,5 @@ function resetCounters(message: Discord.Message) {
 	currentStatus.queueTeamTimes[message.channel.id] = null;
 	collectors.forEach(elem => elem.cleanup());
 	collectors.slice(0, collectors.length);
-	return message.reply('New session created.');
+	return message.channel.send('New session created.');
 }
