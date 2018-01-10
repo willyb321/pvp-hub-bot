@@ -59,7 +59,7 @@ export interface IMatchModel extends mongoose.Model<IMatchDoc> {
 
 export const Match: IMatchModel = mongoose.model('match', matchSchema);
 
-matchSchema.plugin(autoIncrement.plugin, { model: 'match', field: 'matchNum' });
+matchSchema.plugin(autoIncrement.plugin, { model: 'match', field: 'matchNum', unique: true });
 
 const wonLossSchema = new mongoose.Schema({
 	id: String,
