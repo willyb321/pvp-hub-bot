@@ -56,6 +56,7 @@ export function register(message: Discord.Message) {
 		currentStatus.currentUsers[message.channel.id].push(message.author);
 		message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers[message.channel.id].length} / ${currentStatus.teamsNumber[message.channel.id]*2}`);
 		if (currentStatus.currentUsers[message.channel.id].length === teamsNumber * 2) {
+			message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers[message.channel.id].join(' ')}`)
 			teams(message);
 		}
 		return;

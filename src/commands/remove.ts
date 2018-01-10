@@ -22,5 +22,8 @@ export function remove(message: Discord.Message) {
 	}
 	const currentUsers = currentStatus.currentUsers[message.channel.id];
 	currentStatus.currentUsers[message.channel.id].splice(currentUsers.findIndex(elem => elem.id === message.mentions.users.first().id), 1);
+	if (currentStatus.currentUsers[message.channel.id].length === 0) {
+		currentStatus.queueStartTimes[message.channel.id] = null;
+	}
 	message.channel.send(`:ok_hand: ${message.mentions.members.first().displayName} removed.`);
 }

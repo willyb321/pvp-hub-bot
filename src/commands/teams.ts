@@ -154,6 +154,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				.then((savedDoc) => {
 					msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers[msg.channel.id].join(' ')}`);
 					msg.channel.send({embed: currentStatus.teamMessage[msg.channel.id]});
+					currentStatus.queueTeamTimes[msg.channel.id] = null;
 				})
 				.catch(err => {
 					console.log(err);

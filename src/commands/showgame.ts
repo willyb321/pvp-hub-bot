@@ -44,6 +44,8 @@ export function showgame(message: Discord.Message) {
 			embed.addField('Team 1', `${t1.join('\n')}`);
 			embed.addField('Team 2', `${t2.join('\n')}`);
 			message.channel.send({embed});
+		} else {
+			message.channel.send('Game not found.')
 		}
 	})
 	.catch(err => {

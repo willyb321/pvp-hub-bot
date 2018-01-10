@@ -12,7 +12,10 @@ export function unregister(message: Discord.Message) {
 	currentStatus.currentUsers[message.channel.id] = _.uniq(currentStatus.currentUsers[message.channel.id]);
 	if (currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
 		_.remove(currentStatus.currentUsers[message.channel.id], elem => elem === message.author);
-		message.channel.send(`Unregistered ${message.author.username}.`);
+		message.channel.send(`Unregistered ${message.member.displayName}.`);
+		if (currentStatus.currentUsers[message.channel.id].length === 0) {
+			currentStatus.queueStartTimes[message.channel.id] = null;
+		}
 		if (currentStatus.teams[message.channel.id] && currentStatus.teams[message.channel.id].length === 2 && currentStatus.currentUsers[message.channel.id].length !== currentStatus.teams[message.channel.id][0].length + currentStatus.teams[message.channel.id][1].length) {
 			teams(message);
 		}
