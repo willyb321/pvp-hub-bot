@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
-import * as autoIncrement from 'mongoose-auto-increment';
 import * as nanoid from 'nanoid';
 import { config } from './utils';
+
 
 mongoose.connect(config.mongoURL);
 
@@ -11,7 +11,6 @@ db.once('open', () => {
 	console.log('Mongo connected!');
 });
 
-autoIncrement.initialize(db);
 
 const participantsSchema = new mongoose.Schema({
 	id: String,
@@ -31,7 +30,7 @@ const matchSchema = new mongoose.Schema({
 	result: {type: Number, required: true},  // team 1 = 1 team 2 = 2
 	teamSelectionSec: {type: Number, required: true}, // Time (in sec) spent from initial teams to teams being locked in.
 	participants: {type: [participantsSchema]},
-	matchNum: {type: Number, index: true}
+	matchNum: {type: Number, default: 0, index: true}
 });
 
 
@@ -57,9 +56,27 @@ export interface IMatchModel extends mongoose.Model<IMatchDoc> {
 
 }
 
-export const Match: IMatchModel = mongoose.model('match', matchSchema);
+export const Match: any = mongoose.model('match', matchSchema);
 
-matchSchema.plugin(autoIncrement.plugin, { model: 'match', field: 'matchNum', unique: true });
+const CounterSchema = new mongoose.Schema({
+    _id: {type: String, required: true},
+    seq: { type: Number, default: 0 }
+});
+const counter = mongoose.model('counter', CounterSchema);
+
+
+matchSchema.pre('save', function(next) {
+    let doc = this;
+    counter.findByIdAndUpdate({_id: 'MatchId'}, {$inc: { seq: 1} }, function(error: Error, counter: any)   {
+        if(error) {
+            return next(error);
+		}
+        doc.matchNum = counter.seq;
+        next();
+    });
+});
+
+
 
 const wonLossSchema = new mongoose.Schema({
 	id: String,

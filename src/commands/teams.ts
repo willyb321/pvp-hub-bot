@@ -13,7 +13,7 @@ import { setTimeout } from 'timers';
 import * as nanoid from 'nanoid';
 import { reset } from './index';
 import * as aysync from "async";
-import { genMatchModel, IMatch, Iparticipants } from '../db';
+import { genMatchModel, IMatch, Iparticipants, Match } from '../db';
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -149,6 +149,8 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 					teamSelectionSec: timeToTeam,
 					participants: participants
 				};
+
+
 				const doc = genMatchModel(matchInfo);
 				doc.save()
 				.then((savedDoc) => {
