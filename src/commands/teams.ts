@@ -165,7 +165,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 
 				currentStatus.locked[msg.channel.id] = true;
 				collectors.forEach(elem => elem.cleanup());
-				setTimeout(() => {
+				currentStatus.timeouts[msg.channel.id] = setTimeout(() => {
 					reset(msg, true);
 				}, 120000);
 			});

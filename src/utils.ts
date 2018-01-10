@@ -21,6 +21,7 @@ export interface IcurrentStatus {
 	queueStartTimes: any;
 	queueEndTimes: any;
 	queueTeamTimes: any;
+	timeouts: any;
 }
 
 export const currentStatus: IcurrentStatus = {
@@ -31,7 +32,8 @@ export const currentStatus: IcurrentStatus = {
 	locked: {},
 	queueEndTimes: {},
 	queueStartTimes: {},
-	queueTeamTimes: {}
+	queueTeamTimes: {},
+	timeouts: {}
 };
 
 export const chunk = (target, size) => {
