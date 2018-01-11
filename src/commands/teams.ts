@@ -21,7 +21,8 @@ Raven.config(config.ravenDSN, {
 
 //TODO: Fix filter.
 const filter = (reaction, msg, emoji) => currentStatus.teams[msg.channel.id].find(elem => elem.id !== reaction.message.author.id) !== undefined && reaction._emoji.name === emoji;
-
+const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
+const filterReroll = (reaction, user) => reaction.emoji.name === '🔄' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
 export function teams(message: Discord.Message, reroll?: boolean) {
 	if (!currentStatus.currentUsers[message.channel.id]) {
 		currentStatus.currentUsers[message.channel.id] = [];
@@ -101,7 +102,7 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 function teamsReactionReroll(msg: Discord.Message, threshold: number) {
 	return msg.react('🔄')
 		.then(() => {
-			const reroll = new Discord.ReactionCollector(msg, (reaction => filter(reaction, msg, '🔄')), {maxUsers: threshold+1});
+			const reroll = new Discord.ReactionCollector(msg, filterReroll, {maxUsers: threshold});
 			collectors.push(reroll);
 			reroll.on('end', (reason) => {
 				console.log(reason);
@@ -119,7 +120,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 	return msg.react('✅')
 		.then(() => {
 
-			const reroll = new Discord.ReactionCollector(msg, (reaction => {console.log(currentStatus.teams[msg.channel.id].find(elem => elem.id !== reaction.message.author.id)); return filter(reaction, msg, '✅')}), {maxUsers: threshold+1});
+			const reroll = new Discord.ReactionCollector(msg, filterApprove, {maxUsers: threshold});
 			collectors.push(reroll);
 			reroll.on('end', (reason) => {
 				console.log(reason);
