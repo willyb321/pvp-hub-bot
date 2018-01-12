@@ -30,7 +30,7 @@ export function register(message: Discord.Message) {
 	} catch (err) {
 		Raven.captureException(err);
 	}
-	if (!currentStatus.teams[message.channel.id]) {
+	if (!currentStatus.teams.has(message.channel.id)) {
 		currentStatus.teams.set(message.channel.id, []);
 	}
 
@@ -44,17 +44,19 @@ export function register(message: Discord.Message) {
 		Raven.captureException(err);
 	}
 
-	if (!teamsNumber) { teamsNumber = 2; }
+	if (!teamsNumber) {
+		teamsNumber = 2;
+	}
 
-	currentStatus.teamsNumber[message.channel.id] = teamsNumber;
+	currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
 
-	if (currentStatus.currentUsers[message.channel.id].length >= teamsNumber * 2) {
+	if (currentStatus.currentUsers.get(message.channel.id).length >= teamsNumber * 2) {
 		return message.reply('Full!');
 	} else if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
 		currentStatus.currentUsers.get(message.channel.id).push(message.author);
-		message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers[message.channel.id].length} / ${currentStatus.teamsNumber[message.channel.id] * 2}`);
+		message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers.get(message.channel.id).length} / ${currentStatus.teamsNumber.get(message.channel.id) * 2}`);
 		if (currentStatus.currentUsers.get(message.channel.id).length === teamsNumber * 2) {
-			message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers[message.channel.id].join(' ')}`);
+			message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers.get(message.channel.id).join(' ')}`);
 			teams(message);
 		}
 		return;
