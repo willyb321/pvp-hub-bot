@@ -34,7 +34,7 @@ export function result(message: Discord.Message) {
 			embed.addField('Winning Team #', winningTeam);
 			const t = [];
 			for (const i of res.participants) {
-				if (i.team === winningTeam) {
+				if (i.team === parseInt(winningTeam)) {
 					t.push(`<@${i.id}>`);
 				}
 			}
