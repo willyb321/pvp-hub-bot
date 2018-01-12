@@ -88,8 +88,8 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 	if (!currentStatus.queueTeamTimes[message.channel.id]) {
 		currentStatus.queueTeamTimes.set(message.channel.id, Math.floor(new Date().getMilliseconds()));
 	}
-	console.log(currentStatus.queueTeamTimes[message.channel.id]);
-	message.channel.send({embed: currentStatus.teamMessage[message.channel.id]})
+	console.log(currentStatus.queueTeamTimes.get(message.channel.id));
+	message.channel.send({embed: currentStatus.teamMessage.get(message.channel.id)})
 		.then((msg: Discord.Message) => {
 			const reactionOne = '\u1F504';
 			teamsReactionApprove(msg, threshold)
