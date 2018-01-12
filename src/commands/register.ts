@@ -15,10 +15,10 @@ Raven.config(config.ravenDSN, {
 
 export function register(message: Discord.Message) {
 	if (!currentStatus.currentUsers[message.channel.id]) {
-		currentStatus.currentUsers[message.channel.id] = [];
+		currentStatus.currentUsers.set(message.channel.id, []);
 	}
 	if (!currentStatus.queueStartTimes[message.channel.id]) {
-		currentStatus.queueStartTimes[message.channel.id] = new Date();
+		currentStatus.queueStartTimes.set(message.channel.id, new Date());
 	}
 	let teamsNumber: number;
 	try {
@@ -31,7 +31,7 @@ export function register(message: Discord.Message) {
 		Raven.captureException(err);
 	}
 	if (!currentStatus.teams[message.channel.id]) {
-		currentStatus.teams[message.channel.id] = [];
+		currentStatus.teams.set(message.channel.id, []);
 	}
 
 	try {
@@ -50,17 +50,16 @@ export function register(message: Discord.Message) {
 
 	if (currentStatus.currentUsers[message.channel.id].length >= teamsNumber * 2) {
 		return message.reply('Full!');
-	} else if (!currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
-		currentStatus.currentUsers[message.channel.id].push(message.author);
+	} else if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
+		currentStatus.currentUsers.get(message.channel.id).push(message.author);
 		message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers[message.channel.id].length} / ${currentStatus.teamsNumber[message.channel.id] * 2}`);
-		if (currentStatus.currentUsers[message.channel.id].length === teamsNumber * 2) {
+		if (currentStatus.currentUsers.get(message.channel.id).length === teamsNumber * 2) {
 			message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers[message.channel.id].join(' ')}`);
 			teams(message);
 		}
 		return;
-	} else if (currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
-		message.reply('Already in the session.');
-		return;
+	} else if (currentStatus.currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
+		return message.reply('Already in the session.');
 	}
 	// currentStatus.currentUsers[message.channel.id] = _.uniq(currentStatus.currentUsers[message.channel.id]);
 	// console.log(currentStatus.currentUsers);

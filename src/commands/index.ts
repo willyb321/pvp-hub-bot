@@ -7,7 +7,6 @@
 export * from './rating';
 export * from './register';
 export * from './remove';
-export * from './start';
 export * from './teams';
 export * from './who';
 export * from './reset';

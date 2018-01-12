@@ -11,7 +11,7 @@ import * as Raven from 'raven';
 import {setTimeout} from 'timers';
 import * as nanoid from 'nanoid';
 import {reset} from './index';
-import {genMatchModel, IMatch, Iparticipants} from '../db';
+import {genMatchModel, IMatch, IMatchDoc, Iparticipants} from '../db';
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -21,15 +21,17 @@ Raven.config(config.ravenDSN, {
 const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
 const filterReroll = (reaction, user) => reaction.emoji.name === '🔄' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
 export function teams(message: Discord.Message, reroll?: boolean) {
-	if (!currentStatus.currentUsers[message.channel.id]) {
-		currentStatus.currentUsers[message.channel.id] = [];
+	if (!currentStatus.currentUsers.has(message.channel.id)) {
+		currentStatus.currentUsers.set(message.channel.id, []);
 	}
-
-	if (!currentStatus.locked[message.channel.id]) {
-		currentStatus.locked[message.channel.id] = false;
+	if (!currentStatus.rerollCount.has(message.channel.id)) {
+		currentStatus.rerollCount.set(message.channel.id, 0);
 	}
-	if (currentStatus.locked[message.channel.id] === true) {
-		return message.reply({embed: currentStatus.teamMessage[message.channel.id]});
+	if (!currentStatus.locked.has(message.channel.id)) {
+		currentStatus.locked.set(message.channel.id, false);
+	}
+	if (currentStatus.locked.get(message.channel.id) === true) {
+		return message.reply({embed: currentStatus.teamMessage.get(message.channel.id)});
 	}
 	let teamsNumber: number;
 	try {
@@ -39,9 +41,10 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 		const channel: any = message.channel;
 		teamsNumber = parseInt(channel.name.split('v')[0]);
 	} catch (err) {
+		console.log(err);
 		Raven.captureException(err);
 	}
-	if (currentStatus.currentUsers[message.channel.id].length < teamsNumber * 2) {
+	if (currentStatus.currentUsers.get(message.channel.id).length < teamsNumber * 2) {
 		return message.reply('Get some more people!');
 	}
 	if (collectors.length > 0) {
@@ -49,42 +52,41 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 		collectors.slice(0, collectors.length);
 	}
 	const curTeamLength =
-	(currentStatus.teams[message.channel.id] && currentStatus.teams[message.channel.id][0] && currentStatus.teams[message.channel.id][1]) ?
-		currentStatus.teams[message.channel.id][0].length + currentStatus.teams[message.channel.id][1].length
+	(currentStatus.teams.has(message.channel.id) && currentStatus.teams.get(message.channel.id)[0] && currentStatus.teams.get(message.channel.id)[1]) ?
+		currentStatus.teams.get(message.channel.id)[0].length + currentStatus.teams.get(message.channel.id)[1].length
 		: 0;
-	if (currentStatus.teams[message.channel.id].length === 2 && currentStatus.currentUsers[message.channel.id].length !== curTeamLength) {
+	if (currentStatus.teams.get(message.channel.id).length === 2 && currentStatus.teams.get(message.channel.id).length !== curTeamLength) {
 		reroll = true;
 	}
 	const threshold = Math.floor((75 / 100) * (teamsNumber * 2));
 	console.log('Threshold: ' + threshold);
-	if (currentStatus.teams[message.channel.id].length === 2 && !reroll) {
-		return message.channel.send({embed: currentStatus.teamMessage[message.channel.id]})
+	if (currentStatus.teams.get(message.channel.id).length === 2 && !reroll) {
+		return message.channel.send({embed: currentStatus.teamMessage.get(message.channel.id)})
 			.then((msg: Discord.Message) => {
 				const reactionOne = '\u1F504';
 				teamsReactionApprove(msg, threshold)
 				.then(() => teamsReactionReroll(msg, threshold));
 			});
 	}
-	if (!teamsNumber) { teamsNumber = 2; }
+	if (!teamsNumber) {
+		teamsNumber = 2;
+	}
 
-	currentStatus.teamsNumber[message.channel.id] = teamsNumber;
-	console.log(`currentStatus.teamsNumber: ${currentStatus.teamsNumber[message.channel.id]}`);
-	console.log(`teamsNumber: ${currentStatus.teamsNumber[message.channel.id]}`);
-	currentStatus.currentUsers[message.channel.id] = _.shuffle(currentStatus.currentUsers[message.channel.id]);
-	currentStatus.teams[message.channel.id] = _.chunk(currentStatus.currentUsers[message.channel.id], teamsNumber);
+	currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
+	console.log(`currentStatus.teamsNumber: ${currentStatus.teamsNumber.get(message.channel.id)}`);
+	currentStatus.currentUsers.set(message.channel.id, _.shuffle(currentStatus.currentUsers.get(message.channel.id)));
+	currentStatus.teams.set(message.channel.id, _.chunk(currentStatus.currentUsers.get(message.channel.id), teamsNumber));
 	const embed = genEmbed('Teams: ', '2 teams');
-	let teamMessage = `${currentStatus.teamsNumber[message.channel.id]} Teams:\n\n`;
-	currentStatus.teams[message.channel.id].forEach((elem, index) => {
+	currentStatus.teams.get(message.channel.id).forEach((elem: Discord.User[], index) => {
 		const inTeam = [];
-		teamMessage += `Team ${index + 1}:\n`;
 		elem.forEach((user: Discord.User) => {
 			inTeam.push(user.toString());
 		});
 		embed.addField(`Team ${index + 1}`, inTeam.join('\n'));
 	});
-	currentStatus.teamMessage[message.channel.id] = embed;
+	currentStatus.teamMessage.set(message.channel.id, embed);
 	if (!currentStatus.queueTeamTimes[message.channel.id]) {
-		currentStatus.queueTeamTimes[message.channel.id] = new Date();
+		currentStatus.queueTeamTimes.set(message.channel.id, Math.floor(new Date().getMilliseconds()));
 	}
 	console.log(currentStatus.queueTeamTimes[message.channel.id]);
 	message.channel.send({embed: currentStatus.teamMessage[message.channel.id]})
@@ -104,6 +106,7 @@ function teamsReactionReroll(msg: Discord.Message, threshold: number) {
 			reroll.on('end', reason => {
 				console.log(reason);
 				console.log('Rerolling!');
+				currentStatus.rerollCount.set(msg.channel.id, currentStatus.rerollCount.get(msg.channel.id) + 1);
 				collectors.forEach(elem => elem.cleanup());
 				teams(msg, true);
 			});
@@ -122,8 +125,8 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 			reroll.on('end', reason => {
 				console.log(reason);
 				console.log('Locking it in!');
-				const curTime: any = new Date();
-				const timeToTeam = Math.abs(new Date().getTime() - currentStatus.queueTeamTimes[msg.channel.id]) / 1000;
+				const curTime = new Date().getTime();
+				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id)) / 1000;
 				const participants: Iparticipants[] = [];
 				const channel: any = msg.channel;
 				let lobby;
@@ -133,7 +136,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 					console.log(err);
 					Raven.captureException(err);
 				}
-				currentStatus.teams[msg.channel.id].forEach((elem, ind) => {
+				currentStatus.teams.get(msg.channel.id).forEach((elem, ind) => {
 					elem.forEach(user => {
 						participants.push({id: user.id, team: ind + 1});
 					});
@@ -141,30 +144,29 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				const matchInfo: IMatch = {
 					nanoid: nanoid(12),
 					lobby: lobby || 'unknown',
-					startQueue: currentStatus.queueStartTimes[msg.channel.id].toISOString(),
+					startQueue: currentStatus.queueStartTimes.get(msg.channel.id).toISOString(),
 					filledTime: new Date().toISOString(),
 					result: 12,
+					rerollCount: currentStatus.rerollCount.get(msg.channel.id) || 0,
 					teamSelectionSec: timeToTeam,
 					participants
 				};
 
 				const doc = genMatchModel(matchInfo);
 				doc.save()
-				.then( savedDoc => {
-					msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers[msg.channel.id].join(' ')}`);
-					msg.channel.send({embed: currentStatus.teamMessage[msg.channel.id]});
-					currentStatus.queueTeamTimes[msg.channel.id] = null;
+				.then( (savedDoc: IMatchDoc) => {
+					msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers.get(msg.channel.id).join(' ')}`);
+					msg.channel.send({embed: currentStatus.teamMessage.get(msg.channel.id)});
+					currentStatus.queueTeamTimes.delete(msg.channel.id);
 				})
 				.catch(err => {
 					console.log(err);
 					Raven.captureException(err);
 				});
 
-				currentStatus.locked[msg.channel.id] = true;
+				currentStatus.locked.set(msg.channel.id, true);
 				collectors.forEach(elem => elem.cleanup());
-				currentStatus.timeouts[msg.channel.id] = setTimeout(() => {
-					reset(msg, true);
-				}, 120000);
+				currentStatus.timeouts.set(msg.channel.id, setTimeout(() => reset(msg, true), 120000));
 			});
 		})
 		.catch(err => {

@@ -9,27 +9,29 @@ import * as Discord from 'discord.js';
 export const config = require('../config.json');
 
 export interface IcurrentStatus {
-	currentUsers: any;
-	teams: any;
-	teamsNumber: any;
-	teamMessage: any;
-	locked: any;
-	queueStartTimes: any;
-	queueEndTimes: any;
-	queueTeamTimes: any;
-	timeouts: any;
+	currentUsers: Map<string, Discord.User[]>;
+	teams: Map<string, Discord.User[][]>;
+	teamsNumber: Map<string, number>;
+	teamMessage: Map<string, Discord.RichEmbed>;
+	locked: Map<string, boolean>;
+	queueStartTimes: Map<string, Date>;
+	queueEndTimes: Map<string, Date>;
+	queueTeamTimes: Map<string, number>;
+	timeouts: Map<string, any>;
+	rerollCount: Map<string, number>;
 }
 
 export const currentStatus: IcurrentStatus = {
-	currentUsers: {},
-	teams: {},
-	teamsNumber: {},
-	teamMessage: {},
-	locked: {},
-	queueEndTimes: {},
-	queueStartTimes: {},
-	queueTeamTimes: {},
-	timeouts: {}
+	currentUsers: new Map(),
+	teams: new Map(),
+	teamsNumber: new Map(),
+	teamMessage: new Map(),
+	locked: new Map(),
+	queueEndTimes: new Map(),
+	queueStartTimes: new Map(),
+	queueTeamTimes: new Map(),
+	timeouts: new Map(),
+	rerollCount: new Map()
 };
 
 export const chunk = (target, size) => {

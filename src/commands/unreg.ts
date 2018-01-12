@@ -9,14 +9,15 @@ import * as Discord from 'discord.js';
 import {teams} from './index';
 
 export function unregister(message: Discord.Message) {
-	currentStatus.currentUsers[message.channel.id] = _.uniq(currentStatus.currentUsers[message.channel.id]);
-	if (currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
-		_.remove(currentStatus.currentUsers[message.channel.id], elem => elem === message.author);
+	currentStatus.currentUsers.set(message.channel.id, _.uniq(currentStatus.currentUsers.get(message.channel.id)));
+	if (currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
+		_.remove(currentStatus.currentUsers.get(message.channel.id), elem => elem.id === message.author.id);
 		message.channel.send(`Unregistered ${message.member.displayName}.`);
-		if (currentStatus.currentUsers[message.channel.id].length === 0) {
-			currentStatus.queueStartTimes[message.channel.id] = null;
+		if (currentStatus.currentUsers.get(message.channel.id).length === 0) {
+			currentStatus.queueStartTimes.set(message.channel.id, null);
 		}
-		if (currentStatus.teams[message.channel.id] && currentStatus.teams[message.channel.id].length === 2 && currentStatus.currentUsers[message.channel.id].length !== currentStatus.teams[message.channel.id][0].length + currentStatus.teams[message.channel.id][1].length) {
+		if (currentStatus.teams.has(message.channel.id) && currentStatus.teams.get(message.channel.id).length === 2) {
+			if (currentStatus.currentUsers.get(message.channel.id).length !== currentStatus.teams.get(message.channel.id)[0].length + currentStatus.teams.get(message.channel.id)[1].length)
 			teams(message);
 		}
 		return;

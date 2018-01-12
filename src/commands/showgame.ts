@@ -7,7 +7,7 @@
 import {config, genEmbed} from '../utils';
 import * as Discord from 'discord.js';
 import * as Raven from 'raven';
-import {Match} from '../db';
+import {IMatchDoc, Match} from '../db';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -20,7 +20,7 @@ export function showgame(message: Discord.Message) {
 	}
 	console.time('Start query');
 	Match.findOne({matchNum})
-	.then(res => {
+	.then((res: IMatchDoc) => {
 		if (res) {
 			console.timeEnd('Start query');
 			console.log(res);
@@ -30,6 +30,7 @@ export function showgame(message: Discord.Message) {
 			embed.addField('Filled Time', res.filledTime);
 			embed.addField('Winning Team:', res.result);
 			embed.addField('Time to select teams (seconds)', res.teamSelectionSec);
+			embed.addField('Amount of rerolls', res.rerollCount || 'Unknown');
 			const t1 = [];
 			const t2 = [];
 			for (const i of res.participants) {

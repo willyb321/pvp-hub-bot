@@ -55,10 +55,6 @@ client.on('message', (message) => {
 	message.content = message.content.toLowerCase();
 	// If the message is "!start"
 
-	if (message.content === '?start') {
-		// Send "pong" to the same channel
-		return Commands.start(message);
-	}
 	if (message.content === '?register' || message.content === '?reg') {
 		// Send "pong" to the same channel
 		return Commands.register(message);

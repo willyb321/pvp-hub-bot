@@ -28,7 +28,8 @@ const matchSchema = new mongoose.Schema({
 	result: {type: Number, required: true},  // team 1 = 1 team 2 = 2
 	teamSelectionSec: {type: Number, required: true}, // Time (in sec) spent from initial teams to teams being locked in.
 	participants: {type: [participantsSchema]},
-	matchNum: {type: Number, default: 0, index: true}
+	matchNum: {type: Number, default: 0, index: true},
+	rerollCount: {type: Number, default: 0}
 });
 
 export interface IMatch {
@@ -39,6 +40,7 @@ export interface IMatch {
 	result: number;
 	participants: Iparticipants[];
 	teamSelectionSec: number;
+	rerollCount: number;
 }
 
 export interface IMatchDoc extends mongoose.Document, IMatch {

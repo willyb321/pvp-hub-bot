@@ -18,5 +18,4 @@ export function help(message: Discord.Message) {
 		.addField('?showgame [ID]', 'Show game info')
 		.addField('?result [ID] [Team # (0/1)]', '[Mod] Set the result of game #[ID]. Make sure to do this otherwise you\'ll end up with team #12 winning.');
 	return message.reply({embed});
-
 }

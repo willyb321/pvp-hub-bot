@@ -15,25 +15,25 @@ export function reset(message: Discord.Message, timeout?: boolean) {
 	if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 		return resetCounters(message);
 	}
-	if (!currentStatus.currentUsers[message.channel.id] || !currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
+	if (!currentStatus.currentUsers.has(message.channel.id) || !currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 		return message.reply('You aren\'t in the session');
 	}
 	return resetCounters(message);
 }
 
 function resetCounters(message: Discord.Message) {
-	currentStatus.currentUsers[message.channel.id] = [];
-	currentStatus.teams[message.channel.id] = [];
-	if (currentStatus.timeouts[message.channel.id]) {
+	currentStatus.currentUsers.set(message.channel.id, []);
+	currentStatus.teams.set(message.channel.id, []);
+	if (currentStatus.timeouts.has(message.channel.id)) {
 		clearTimeout(currentStatus.timeouts[message.channel.id]);
 	}
-	currentStatus.timeouts[message.channel.id] = null;
-	currentStatus.locked[message.channel.id] = false;
-	currentStatus.teamMessage[message.channel.id] = [];
-	currentStatus.teamsNumber[message.channel.id] = [];
-	currentStatus.queueStartTimes[message.channel.id] = undefined;
-	currentStatus.queueEndTimes[message.channel.id] = undefined;
-	currentStatus.queueTeamTimes[message.channel.id] = null;
+	currentStatus.timeouts.delete(message.channel.id);
+	currentStatus.locked.delete(message.channel.id);
+	currentStatus.teamMessage.delete(message.channel.id);
+	currentStatus.teamsNumber.delete(message.channel.id);
+	currentStatus.queueStartTimes.delete(message.channel.id);
+	currentStatus.queueEndTimes.delete(message.channel.id);
+	currentStatus.queueTeamTimes.delete(message.channel.id);
 	collectors.forEach(elem => elem.cleanup());
 	collectors.slice(0, collectors.length);
 	return message.channel.send('New session created.');
