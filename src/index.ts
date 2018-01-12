@@ -6,25 +6,34 @@
  */
 // Import modules
 import 'source-map-support/register';
-import * as Discord from 'discord.js';
-import * as Commands from './commands';
+import * as Commando from 'discord.js-commando';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
 import {config} from './utils';
+import {join} from "path";
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
 
 // Create an instance of a Discord client
-export const client = new Discord.Client();
+export const client = new Commando.Client({
+	owner: config.ownerID,
+	commandPrefix: '?'
+});
 const {allowedServers, token} = config;
 
+client
+	.on('error', console.error)
+	.on('warn', console.warn);
+
 process.on('uncaughtException', (err) => {
+	console.error(err);
 	Raven.captureException(err);
 });
 
 process.on('unhandledRejection', (err: Error) => {
+	console.error(err);
 	Raven.captureException(err);
 });
 
@@ -41,69 +50,13 @@ client.on('ready', () => {
 		});
 });
 
-// Create an event listener for messages
-client.on('message', (message) => {
-	if (message.author.id === client.user.id) {
-		return;
-	}
-	if (_.indexOf(allowedServers, message.guild.id) === -1) {
-		return;
-	}
-	if (_.indexOf(config.allowedChannels, message.channel.id) === -1) {
-		return;
-	}
-	message.content = message.content.toLowerCase();
-	// If the message is "!start"
+client.registry
+	.registerGroup('matches', 'Matches')
+	.registerGroup('misc', 'Misc')
+	.registerDefaults()
+	.registerCommandsIn(join(__dirname, 'commands', 'matches'))
+	.registerCommandsIn(join(__dirname, 'commands', 'misc'));
 
-	if (message.content === '?register' || message.content === '?reg') {
-		// Send "pong" to the same channel
-		return Commands.register(message);
-	}
-	if (message.content.startsWith('?unregister') || message.content.startsWith('?unreg')) {
-		// Send "pong" to the same channel
-		return Commands.unregister(message);
-	}
-	if (message.content === '?who') {
-		// Send "pong" to the same channel
-		return Commands.who(message);
-	}
-	if (message.content.startsWith('?teams')) {
-		// Send "pong" to the same channel
-		return Commands.teams(message);
-	}
-	if (message.content.startsWith('?rating')) {
-		// Send "pong" to the same channel
-		return Commands.rating(message);
-	}
-	if (message.content.startsWith('?remove')) {
-		// Send "pong" to the same channel
-		return Commands.remove(message);
-	}
-	if (message.content === '?new') {
-		// Send "pong" to the same channel
-		return Commands.reset(message);
-	}
-	if (message.content === '?help') {
-		// Send "pong" to the same channel
-		return Commands.help(message);
-	}
-	if (message.content === '?restart') {
-		// Send "pong" to the same channel
-		return Commands.restart(message);
-	}
-	if (message.content === '?status') {
-		// Send "pong" to the same channel
-		return Commands.status(message);
-	}
-	if (message.content.startsWith('?showgame')) {
-		// Send "pong" to the same channel
-		return Commands.showgame(message);
-	}
-	if (message.content.startsWith('?result')) {
-		// Send "pong" to the same channel
-		return Commands.result(message);
-	}
-});
 // Log our bot in
 client.login(token)
 	.then(() => {

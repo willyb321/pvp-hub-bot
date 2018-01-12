@@ -4,23 +4,26 @@
 /**
  * ignore
  */
-import {config, currentStatus, genEmbed} from '../utils';
+import {config, currentStatus, genEmbed} from '../../utils';
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
-import {setTimeout} from 'timers';
 import * as nanoid from 'nanoid';
-import {reset} from './index';
-import {genMatchModel, IMatch, IMatchDoc, Iparticipants} from '../db';
+import {reset} from './reset';
+import {genMatchModel, IMatch, IMatchDoc, Iparticipants} from '../../db';
+import * as Commando from 'discord.js-commando';
+
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
-
 //TODO: Fix filter.
 const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers.get(reaction.message.channel.id).findIndex(elem => elem.id === user.id) > -1;
 const filterReroll = (reaction, user) => reaction.emoji.name === '🔄' && currentStatus.currentUsers.get(reaction.message.channel.id).findIndex(elem => elem.id === user.id) > -1;
-export function teams(message: Discord.Message, reroll?: boolean) {
+export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
+	if (!message.channel) {
+		return;
+	}
 	if (!currentStatus.currentUsers.has(message.channel.id)) {
 		currentStatus.currentUsers.set(message.channel.id, []);
 	}
@@ -173,4 +176,21 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 			console.log(err);
 			Raven.captureException(err);
 		});
+}
+
+export class TeamsCommand extends Commando.Command {
+	constructor(client) {
+		super(client, {
+			name: 'teams',
+			group: 'matches',
+			memberName: 'teams',
+			description: 'Get teams.',
+			details: 'Get teams.',
+			examples: ['teams']
+		});
+	}
+
+	async run(message) {
+		teams(message);
+	}
 }
