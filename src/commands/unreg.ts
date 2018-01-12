@@ -6,7 +6,7 @@
 import {currentStatus} from '../utils';
 import * as _ from 'lodash';
 import * as Discord from 'discord.js';
-import { teams } from './index';
+import {teams} from './index';
 
 export function unregister(message: Discord.Message) {
 	currentStatus.currentUsers[message.channel.id] = _.uniq(currentStatus.currentUsers[message.channel.id]);

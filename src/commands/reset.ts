@@ -6,15 +6,14 @@
  */
 import {currentStatus, config} from '../utils';
 import * as Discord from 'discord.js';
-import * as _ from 'lodash';
-import { collectors } from './index';
+import {collectors} from './index';
 
 export function reset(message: Discord.Message, timeout?: boolean) {
 	if (timeout) {
 		return resetCounters(message);
 	}
 	if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-		return resetCounters(message)
+		return resetCounters(message);
 	}
 	if (!currentStatus.currentUsers[message.channel.id] || !currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
 		return message.reply('You aren\'t in the session');
@@ -26,7 +25,7 @@ function resetCounters(message: Discord.Message) {
 	currentStatus.currentUsers[message.channel.id] = [];
 	currentStatus.teams[message.channel.id] = [];
 	if (currentStatus.timeouts[message.channel.id]) {
-		clearTimeout(currentStatus.timeouts[message.channel.id])
+		clearTimeout(currentStatus.timeouts[message.channel.id]);
 	}
 	currentStatus.timeouts[message.channel.id] = null;
 	currentStatus.locked[message.channel.id] = false;

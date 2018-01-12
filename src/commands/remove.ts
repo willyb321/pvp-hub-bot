@@ -6,7 +6,6 @@
  */
 import {currentStatus, config} from '../utils';
 import * as Discord from 'discord.js';
-import * as _ from 'lodash';
 
 export function remove(message: Discord.Message) {
 	if (!message.member.roles.map(elem => config.allowedRoles.includes(elem))) {

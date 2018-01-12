@@ -12,7 +12,7 @@ export function who(message: Discord.Message) {
 	if (!currentStatus.currentUsers[message.channel.id]) {
 		currentStatus.currentUsers[message.channel.id] = [];
 	}
-	const embed = genEmbed(`Current Queue:`, `${currentStatus.currentUsers[message.channel.id].join('\n')}`)
+	const embed = genEmbed('Current Queue:', `${currentStatus.currentUsers[message.channel.id].join('\n')}`);
 	if (currentStatus.currentUsers[message.channel.id].length === 0) {
 		message.channel.send(`Nobody currently registered for ${message.channel.toString()}.`);
 		return;

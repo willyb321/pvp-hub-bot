@@ -10,7 +10,7 @@ import * as Discord from 'discord.js';
 import * as Commands from './commands';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
-import {config, currentStatus} from './utils';
+import {config} from './utils';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -20,14 +20,13 @@ Raven.config(config.ravenDSN, {
 export const client = new Discord.Client();
 const {allowedServers, token} = config;
 
-process.on('uncaughtException', (err: Error) => {
+process.on('uncaughtException', (err) => {
 	Raven.captureException(err);
 });
 
 process.on('unhandledRejection', (err: Error) => {
 	Raven.captureException(err);
 });
-
 
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
@@ -43,7 +42,7 @@ client.on('ready', () => {
 });
 
 // Create an event listener for messages
-client.on('message', (message: Discord.Message) => {
+client.on('message', (message) => {
 	if (message.author.id === client.user.id) {
 		return;
 	}
@@ -108,15 +107,11 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		return Commands.result(message);
 	}
-
-	// if (message.content.startsWith('?')) {
-	// 	return message.reply('whadiyatalkinabeet');
-	// }
 });
 // Log our bot in
 client.login(token)
 	.then(() => {
-		console.log(`PvP Hub bot logged in.`)
+		console.log('PvP Hub bot logged in.');
 	})
 	.catch((err: Error) => {
 		Raven.captureException(err);

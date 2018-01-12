@@ -5,11 +5,9 @@
  * ignore
  */
 import {currentStatus, config} from '../utils';
-import * as _ from 'lodash';
 import * as Discord from 'discord.js';
-import * as Raven from "raven";
-import {start} from './start';
-import { teams } from './teams';
+import * as Raven from 'raven';
+import {teams} from './teams';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -46,7 +44,7 @@ export function register(message: Discord.Message) {
 		Raven.captureException(err);
 	}
 
-	if (!teamsNumber) teamsNumber = 2;
+	if (!teamsNumber) { teamsNumber = 2; }
 
 	currentStatus.teamsNumber[message.channel.id] = teamsNumber;
 
@@ -54,9 +52,9 @@ export function register(message: Discord.Message) {
 		return message.reply('Full!');
 	} else if (!currentStatus.currentUsers[message.channel.id].find(elem => elem === message.author)) {
 		currentStatus.currentUsers[message.channel.id].push(message.author);
-		message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers[message.channel.id].length} / ${currentStatus.teamsNumber[message.channel.id]*2}`);
+		message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers[message.channel.id].length} / ${currentStatus.teamsNumber[message.channel.id] * 2}`);
 		if (currentStatus.currentUsers[message.channel.id].length === teamsNumber * 2) {
-			message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers[message.channel.id].join(' ')}`)
+			message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers[message.channel.id].join(' ')}`);
 			teams(message);
 		}
 		return;

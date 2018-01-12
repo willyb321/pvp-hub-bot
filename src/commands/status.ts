@@ -5,7 +5,6 @@
  * ignore
  */
 import * as Discord from 'discord.js';
-import { currentStatus } from '../utils';
 
 export function status(message: Discord.Message) {
 	const embed = new Discord.RichEmbed();

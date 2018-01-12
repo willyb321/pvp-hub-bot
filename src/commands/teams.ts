@@ -7,20 +7,17 @@
 import {config, currentStatus, genEmbed} from '../utils';
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
-import * as Raven from "raven";
-import { client } from '../index';
-import { setTimeout } from 'timers';
+import * as Raven from 'raven';
+import {setTimeout} from 'timers';
 import * as nanoid from 'nanoid';
-import { reset } from './index';
-import * as aysync from "async";
-import { genMatchModel, IMatch, Iparticipants, Match } from '../db';
+import {reset} from './index';
+import {genMatchModel, IMatch, Iparticipants} from '../db';
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
 
 //TODO: Fix filter.
-const filter = (reaction, msg, emoji) => currentStatus.teams[msg.channel.id].find(elem => elem.id !== reaction.message.author.id) !== undefined && reaction._emoji.name === emoji;
 const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
 const filterReroll = (reaction, user) => reaction.emoji.name === '🔄' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
 export function teams(message: Discord.Message, reroll?: boolean) {
@@ -32,7 +29,7 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 		currentStatus.locked[message.channel.id] = false;
 	}
 	if (currentStatus.locked[message.channel.id] === true) {
-		return message.reply({embed: currentStatus.teamMessage[message.channel.id]})
+		return message.reply({embed: currentStatus.teamMessage[message.channel.id]});
 	}
 	let teamsNumber: number;
 	try {
@@ -44,17 +41,17 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 	} catch (err) {
 		Raven.captureException(err);
 	}
-	if (currentStatus.currentUsers[message.channel.id].length < teamsNumber*2) {
+	if (currentStatus.currentUsers[message.channel.id].length < teamsNumber * 2) {
 		return message.reply('Get some more people!');
 	}
 	if (collectors.length > 0) {
 		collectors.forEach(elem => elem.cleanup());
-		collectors.slice(0, collectors.length)
+		collectors.slice(0, collectors.length);
 	}
 	const curTeamLength =
 	(currentStatus.teams[message.channel.id] && currentStatus.teams[message.channel.id][0] && currentStatus.teams[message.channel.id][1]) ?
 		currentStatus.teams[message.channel.id][0].length + currentStatus.teams[message.channel.id][1].length
-		: 0
+		: 0;
 	if (currentStatus.teams[message.channel.id].length === 2 && currentStatus.currentUsers[message.channel.id].length !== curTeamLength) {
 		reroll = true;
 	}
@@ -68,17 +65,17 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 				.then(() => teamsReactionReroll(msg, threshold));
 			});
 	}
-	if (!teamsNumber) teamsNumber = 2;
+	if (!teamsNumber) { teamsNumber = 2; }
 
 	currentStatus.teamsNumber[message.channel.id] = teamsNumber;
 	console.log(`currentStatus.teamsNumber: ${currentStatus.teamsNumber[message.channel.id]}`);
 	console.log(`teamsNumber: ${currentStatus.teamsNumber[message.channel.id]}`);
 	currentStatus.currentUsers[message.channel.id] = _.shuffle(currentStatus.currentUsers[message.channel.id]);
 	currentStatus.teams[message.channel.id] = _.chunk(currentStatus.currentUsers[message.channel.id], teamsNumber);
-	const embed = genEmbed(`Teams: `, `2 teams`);
+	const embed = genEmbed('Teams: ', '2 teams');
 	let teamMessage = `${currentStatus.teamsNumber[message.channel.id]} Teams:\n\n`;
 	currentStatus.teams[message.channel.id].forEach((elem, index) => {
-		let inTeam = [];
+		const inTeam = [];
 		teamMessage += `Team ${index + 1}:\n`;
 		elem.forEach((user: Discord.User) => {
 			inTeam.push(user.toString());
@@ -104,7 +101,7 @@ function teamsReactionReroll(msg: Discord.Message, threshold: number) {
 		.then(() => {
 			const reroll = new Discord.ReactionCollector(msg, filterReroll, {maxUsers: threshold});
 			collectors.push(reroll);
-			reroll.on('end', (reason) => {
+			reroll.on('end', reason => {
 				console.log(reason);
 				console.log('Rerolling!');
 				collectors.forEach(elem => elem.cleanup());
@@ -122,7 +119,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 
 			const reroll = new Discord.ReactionCollector(msg, filterApprove, {maxUsers: threshold});
 			collectors.push(reroll);
-			reroll.on('end', (reason) => {
+			reroll.on('end', reason => {
 				console.log(reason);
 				console.log('Locking it in!');
 				const curTime: any = new Date();
@@ -138,7 +135,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				}
 				currentStatus.teams[msg.channel.id].forEach((elem, ind) => {
 					elem.forEach(user => {
-						participants.push({id: user.id, team: ind+1});
+						participants.push({id: user.id, team: ind + 1});
 					});
 				});
 				const matchInfo: IMatch = {
@@ -148,13 +145,12 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 					filledTime: new Date().toISOString(),
 					result: 12,
 					teamSelectionSec: timeToTeam,
-					participants: participants
+					participants
 				};
-
 
 				const doc = genMatchModel(matchInfo);
 				doc.save()
-				.then((savedDoc) => {
+				.then( savedDoc => {
 					msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers[msg.channel.id].join(' ')}`);
 					msg.channel.send({embed: currentStatus.teamMessage[msg.channel.id]});
 					currentStatus.queueTeamTimes[msg.channel.id] = null;

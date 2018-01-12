@@ -1,7 +1,6 @@
 import * as mongoose from 'mongoose';
 import * as nanoid from 'nanoid';
-import { config } from './utils';
-
+import {config} from './utils';
 
 mongoose.connect(config.mongoURL);
 
@@ -10,7 +9,6 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
 	console.log('Mongo connected!');
 });
-
 
 const participantsSchema = new mongoose.Schema({
 	id: String,
@@ -33,8 +31,6 @@ const matchSchema = new mongoose.Schema({
 	matchNum: {type: Number, default: 0, index: true}
 });
 
-
-
 export interface IMatch {
 	nanoid: string;
 	lobby: number;
@@ -45,12 +41,9 @@ export interface IMatch {
 	teamSelectionSec: number;
 }
 
-
 export interface IMatchDoc extends mongoose.Document, IMatch {
 	matchNum: number;
 }
-
-
 
 export interface IMatchModel extends mongoose.Model<IMatchDoc> {
 
@@ -60,23 +53,20 @@ export const Match: any = mongoose.model('match', matchSchema);
 
 const CounterSchema = new mongoose.Schema({
     _id: {type: String, required: true},
-    seq: { type: Number, default: 0 }
+    seq: {type: Number, default: 0}
 });
 const counter = mongoose.model('counter', CounterSchema);
 
-
-matchSchema.pre('save', function(next) {
-    let doc = this;
-    counter.findByIdAndUpdate({_id: 'MatchId'}, {$inc: { seq: 1} }, function(error: Error, counter: any)   {
-        if(error) {
+matchSchema.pre('save', function (next) {
+    const doc = this;
+    counter.findByIdAndUpdate({_id: 'MatchId'}, {$inc: {seq: 1}}, function (error: Error, counter: any)   {
+        if (error) {
             return next(error);
 		}
         doc.matchNum = counter.seq;
         next();
     });
 });
-
-
 
 const wonLossSchema = new mongoose.Schema({
 	id: String,
@@ -99,23 +89,19 @@ const userSchema = new mongoose.Schema({
 export interface IUser {
 	nanoid: string;
 	discordID: string;
-	won: IWonLoss[]
+	won: IWonLoss[];
 	lost: IWonLoss[];
 }
-
 
 export interface IUserDoc extends mongoose.Document, IUser {
 
 }
-
-
 
 export interface IUserModel extends mongoose.Model<IUserDoc> {
 
 }
 
 export const User: IUserModel = mongoose.model('match', matchSchema);
-
 
 export const genMatchModel = (info: IMatch): IMatchDoc => new Match(info);
 // export const genUserModel = (info: IUserDoc, won: boolean): IMatchDoc => Match.findOneAndUpdate({_id: info._id}, {$set: {  }})
