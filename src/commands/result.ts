@@ -32,6 +32,13 @@ export function result(message: Discord.Message) {
 			console.log(res);
 			const embed = genEmbed('Match Result', `Game #${matchNum}`);
 			embed.addField('Winning Team #', winningTeam);
+			const t = [];
+			for (const i of res.participants) {
+				if (i.team === winningTeam) {
+					t.push(`<@${i.id}>`);
+				}
+			}
+			embed.addField('Team Members', `${t.join('\n')}`);
 			message.channel.send({embed});
 		}
 	})
