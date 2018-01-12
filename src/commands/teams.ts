@@ -18,8 +18,8 @@ Raven.config(config.ravenDSN, {
 }).install();
 
 //TODO: Fix filter.
-const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
-const filterReroll = (reaction, user) => reaction.emoji.name === '🔄' && currentStatus.currentUsers[reaction.message.channel.id].findIndex(elem => elem.id === user.id) > -1;
+const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers.get(reaction.message.channel.id).findIndex(elem => elem.id === user.id) > -1;
+const filterReroll = (reaction, user) => reaction.emoji.name === '🔄' && currentStatus.currentUsers.get(reaction.message.channel.id).findIndex(elem => elem.id === user.id) > -1;
 export function teams(message: Discord.Message, reroll?: boolean) {
 	if (!currentStatus.currentUsers.has(message.channel.id)) {
 		currentStatus.currentUsers.set(message.channel.id, []);
@@ -85,7 +85,7 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 		embed.addField(`Team ${index + 1}`, inTeam.join('\n'));
 	});
 	currentStatus.teamMessage.set(message.channel.id, embed);
-	if (!currentStatus.queueTeamTimes[message.channel.id]) {
+	if (!currentStatus.queueTeamTimes.has(message.channel.id)) {
 		currentStatus.queueTeamTimes.set(message.channel.id, Math.floor(new Date().getMilliseconds()));
 	}
 	console.log(currentStatus.queueTeamTimes.get(message.channel.id));
