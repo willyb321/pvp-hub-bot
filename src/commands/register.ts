@@ -14,10 +14,10 @@ Raven.config(config.ravenDSN, {
 }).install();
 
 export function register(message: Discord.Message) {
-	if (!currentStatus.currentUsers[message.channel.id]) {
+	if (!currentStatus.currentUsers.has(message.channel.id)) {
 		currentStatus.currentUsers.set(message.channel.id, []);
 	}
-	if (!currentStatus.queueStartTimes[message.channel.id]) {
+	if (!currentStatus.queueStartTimes.has(message.channel.id)) {
 		currentStatus.queueStartTimes.set(message.channel.id, new Date());
 	}
 	let teamsNumber: number;
