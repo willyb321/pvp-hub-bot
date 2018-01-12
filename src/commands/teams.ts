@@ -126,7 +126,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				console.log(reason);
 				console.log('Locking it in!');
 				const curTime = Math.floor(new Date().getSeconds());
-				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id)) / 1000;
+				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id)) / 60;
 				const participants: Iparticipants[] = [];
 				const channel: any = msg.channel;
 				let lobby;

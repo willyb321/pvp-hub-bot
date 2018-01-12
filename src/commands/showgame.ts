@@ -29,7 +29,7 @@ export function showgame(message: Discord.Message) {
 			embed.addField('Time when first ?reg', res.startQueue);
 			embed.addField('Filled Time', res.filledTime);
 			embed.addField('Winning Team:', res.result);
-			embed.addField('Time to select teams (seconds)', res.teamSelectionSec);
+			embed.addField('Time to select teams (minutes)', res.teamSelectionSec);
 			embed.addField('Amount of rerolls', res.rerollCount || 'Unknown');
 			const t1 = [];
 			const t2 = [];
