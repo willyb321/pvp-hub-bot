@@ -86,7 +86,7 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 	});
 	currentStatus.teamMessage.set(message.channel.id, embed);
 	if (!currentStatus.queueTeamTimes.has(message.channel.id)) {
-		currentStatus.queueTeamTimes.set(message.channel.id, Math.floor(new Date().getMilliseconds()));
+		currentStatus.queueTeamTimes.set(message.channel.id, Math.floor(new Date().getSeconds()));
 	}
 	console.log(currentStatus.queueTeamTimes.get(message.channel.id));
 	message.channel.send({embed: currentStatus.teamMessage.get(message.channel.id)})
@@ -125,7 +125,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 			reroll.on('end', reason => {
 				console.log(reason);
 				console.log('Locking it in!');
-				const curTime = new Date().getTime();
+				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id)) / 1000;
 				const participants: Iparticipants[] = [];
 				const channel: any = msg.channel;
