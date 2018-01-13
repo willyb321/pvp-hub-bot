@@ -24,7 +24,7 @@ export class ResultCommand extends Commando.Command {
 			memberName: 'result',
 			description: 'Gets queue for current channel.',
 			details: 'Gets queue for current channel.',
-			examples: ['who'],
+			examples: ['result 13 1'],
 
 			args: [
 				{
@@ -49,10 +49,7 @@ export class ResultCommand extends Commando.Command {
 		console.log(message.content.split(' '));
 		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			console.log('Not modifying game.');
-			return;
-		}
-		if (!matchNum || !winningTeam) {
-			return message.reply('Syntax: ?result [matchnum] [winning team]. eg: ?result 0 1');
+			return message.channel.send('No permission.');
 		}
 		console.time('Start query');
 		Match.findOneAndUpdate({matchNum}, {result: winningTeam})

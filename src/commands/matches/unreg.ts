@@ -3,9 +3,8 @@
  */
 
 /** ignore */
-import {currentStatus, genEmbed} from '../../utils';
+import {currentStatus} from '../../utils';
 import * as _ from 'lodash';
-import * as Discord from 'discord.js';
 import {teams} from './teams';
 import * as Commando from 'discord.js-commando';
 
@@ -21,7 +20,7 @@ export class UnregCommand extends Commando.Command {
 		});
 	}
 
-	async run(message, args) {
+	async run(message) {
 		currentStatus.currentUsers.set(message.channel.id, _.uniq(currentStatus.currentUsers.get(message.channel.id)));
 		if (currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 			_.remove(currentStatus.currentUsers.get(message.channel.id), elem => elem.id === message.author.id);

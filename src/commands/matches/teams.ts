@@ -66,7 +66,6 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 	if (currentStatus.teams.get(message.channel.id).length === 2 && !reroll) {
 		return message.channel.send({embed: currentStatus.teamMessage.get(message.channel.id)})
 			.then((msg: Discord.Message) => {
-				const reactionOne = '\u1F504';
 				teamsReactionApprove(msg, threshold)
 				.then(() => teamsReactionReroll(msg, threshold));
 			});
@@ -94,7 +93,6 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 	console.log(currentStatus.queueTeamTimes.get(message.channel.id));
 	message.channel.send({embed: currentStatus.teamMessage.get(message.channel.id)})
 		.then((msg: Discord.Message) => {
-			const reactionOne = '\u1F504';
 			teamsReactionApprove(msg, threshold)
 			.then(() => teamsReactionReroll(msg, threshold));
 		});

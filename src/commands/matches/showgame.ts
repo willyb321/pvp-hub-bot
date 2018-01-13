@@ -24,12 +24,14 @@ export class ShowGameCommand extends Commando.Command {
 			details: 'Show info about a game.',
 			examples: ['showgame 1'],
 
-			args: [{
-				key: 'match',
-				prompt: 'What game #',
-				type: 'integer',
-				validate: val => parseInt(val) >= 0
-			}]
+			args: [
+				{
+					key: 'match',
+					prompt: 'What game #',
+					type: 'integer',
+					validate: val => parseInt(val) >= 0
+				}
+			]
 		});
 	}
 
