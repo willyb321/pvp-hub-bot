@@ -8,7 +8,7 @@ import * as Discord from 'discord.js';
 
 export const config = require('../config.json');
 
-export interface IcurrentStatus {
+export interface ICurrentStatus {
 	currentUsers: Map<string, Discord.User[]>;
 	teams: Map<string, Discord.User[][]>;
 	teamsNumber: Map<string, number>;
@@ -21,7 +21,7 @@ export interface IcurrentStatus {
 	rerollCount: Map<string, number>;
 }
 
-export const currentStatus: IcurrentStatus = {
+export const currentStatus: ICurrentStatus = {
 	currentUsers: new Map(),
 	teams: new Map(),
 	teamsNumber: new Map(),

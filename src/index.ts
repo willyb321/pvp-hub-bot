@@ -11,6 +11,8 @@ import * as _ from 'lodash';
 import * as Raven from 'raven';
 import {config} from './utils';
 import {join} from "path";
+import * as sqlite from "sqlite";
+
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -19,13 +21,21 @@ Raven.config(config.ravenDSN, {
 // Create an instance of a Discord client
 export const client = new Commando.Client({
 	owner: config.ownerID,
-	commandPrefix: '?'
+	commandPrefix: '?',
+	unknownCommandResponse: false
 });
 const {allowedServers, token} = config;
 
 client
 	.on('error', console.error)
 	.on('warn', console.warn);
+
+client.setProvider(
+	sqlite.open(join(__dirname, 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
+).catch(err => {
+	console.error(err);
+	Raven.captureException(err);
+});
 
 process.on('uncaughtException', (err) => {
 	console.error(err);
