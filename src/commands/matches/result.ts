@@ -44,6 +44,9 @@ export class ResultCommand extends Commando.Command {
 	}
 
 	async run(message, args) {
+		if (!config.allowedChannels.includes(message.channel.id)) {
+			return;
+		}
 		const matchNum = args.matchNum;
 		const winningTeam = args.winning;
 		console.log(message.content.split(' '));

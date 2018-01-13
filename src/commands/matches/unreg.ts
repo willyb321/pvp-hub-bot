@@ -3,7 +3,7 @@
  */
 
 /** ignore */
-import {currentStatus} from '../../utils';
+import {config, currentStatus} from '../../utils';
 import * as _ from 'lodash';
 import {teams} from './teams';
 import * as Commando from 'discord.js-commando';
@@ -21,6 +21,9 @@ export class UnregCommand extends Commando.Command {
 	}
 
 	async run(message) {
+		if (!config.allowedChannels.includes(message.channel.id)) {
+			return;
+		}
 		currentStatus.currentUsers.set(message.channel.id, _.uniq(currentStatus.currentUsers.get(message.channel.id)));
 		if (currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 			_.remove(currentStatus.currentUsers.get(message.channel.id), elem => elem.id === message.author.id);

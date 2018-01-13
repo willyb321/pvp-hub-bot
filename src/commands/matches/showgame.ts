@@ -36,6 +36,9 @@ export class ShowGameCommand extends Commando.Command {
 	}
 
 	async run(message, args) {
+		if (!config.allowedChannels.includes(message.channel.id)) {
+			return;
+		}
 		const matchNum = args.match;
 		console.time('Start query');
 		Match.findOne({matchNum})

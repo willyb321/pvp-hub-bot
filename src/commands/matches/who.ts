@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {currentStatus, genEmbed} from '../../utils';
+import {config, currentStatus, genEmbed} from '../../utils';
 import * as Commando from 'discord.js-commando';
 
 
@@ -21,6 +21,9 @@ export class WhoCommand extends Commando.Command {
 	}
 
 	async run(message) {
+		if (!config.allowedChannels.includes(message.channel.id)) {
+			return;
+		}
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
 			currentStatus.currentUsers.set(message.channel.id, []);
 		}

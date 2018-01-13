@@ -49,6 +49,9 @@ function resetCounters(message: Commando.CommandoMessage) {
 	if (!message.message) {
 		return;
 	}
+	if (!config.allowedChannels.includes(message.channel.id)) {
+		return;
+	}
 	currentStatus.currentUsers.set(message.message.channel.id, []);
 	currentStatus.teams.set(message.message.channel.id, []);
 	if (currentStatus.timeouts.has(message.message.channel.id)) {

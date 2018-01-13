@@ -24,6 +24,9 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 	if (!message.channel) {
 		return;
 	}
+	if (!config.allowedChannels.includes(message.channel.id)) {
+		return;
+	}
 	if (!currentStatus.currentUsers.has(message.channel.id)) {
 		currentStatus.currentUsers.set(message.channel.id, []);
 	}

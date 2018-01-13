@@ -27,6 +27,9 @@ export class RegisterCommand extends Commando.Command {
 	}
 
 	async run(message) {
+		if (!config.allowedChannels.includes(message.channel.id)) {
+			return;
+		}
 		if (message.channel.type !== 'text') {
 			return;
 		}
