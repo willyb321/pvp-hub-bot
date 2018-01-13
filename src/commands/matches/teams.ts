@@ -12,10 +12,24 @@ import * as nanoid from 'nanoid';
 import {reset} from './reset';
 import {genMatchModel, IMatch, IMatchDoc, Iparticipants} from '../../db';
 import * as Commando from 'discord.js-commando';
+import {basename} from "path";
 
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
-	autoBreadcrumbs: true
+	autoBreadcrumbs: true,
+	dataCallback: function (data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
 }).install();
 //TODO: Fix filter.
 const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers.get(reaction.message.channel.id).findIndex(elem => elem.id === user.id) > -1;
@@ -71,7 +85,11 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 			.then((msg: Discord.Message) => {
 				teamsReactionApprove(msg, threshold)
 				.then(() => teamsReactionReroll(msg, threshold));
-			});
+			})
+			.catch(err => {
+				console.error(err);
+				Raven.captureException(err);
+			})
 	}
 	if (!teamsNumber) {
 		teamsNumber = 2;

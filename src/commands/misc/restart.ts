@@ -8,9 +8,23 @@ import {config} from '../../utils';
 import {client} from '../../index';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
+import {basename} from "path";
 
 Raven.config(config.ravenDSN, {
-	autoBreadcrumbs: true
+	autoBreadcrumbs: true,
+	dataCallback: function (data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
 }).install();
 
 export class RestartCommand extends Commando.Command {

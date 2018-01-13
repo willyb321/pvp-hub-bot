@@ -8,7 +8,25 @@ import {currentStatus, config} from '../../utils';
 import * as Discord from 'discord.js';
 import {collectors} from './teams';
 import * as Commando from 'discord.js-commando';
+import {basename} from "path";
+import * as Raven from "raven";
 
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true,
+	dataCallback: function (data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
+}).install();
 
 export class NewCommand extends Commando.Command {
 	constructor(client) {

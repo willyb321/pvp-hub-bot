@@ -7,6 +7,25 @@ import {config, currentStatus} from '../../utils';
 import * as _ from 'lodash';
 import {teams} from './teams';
 import * as Commando from 'discord.js-commando';
+import * as Raven from 'raven';
+import {basename} from "path";
+
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true,
+	dataCallback: function (data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
+}).install();
 
 export class UnregCommand extends Commando.Command {
 	constructor(client) {

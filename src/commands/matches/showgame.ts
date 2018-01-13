@@ -9,9 +9,23 @@ import * as Discord from 'discord.js';
 import * as Raven from 'raven';
 import {IMatchDoc, Match} from '../../db';
 import * as Commando from 'discord.js-commando';
+import {basename} from "path";
 
 Raven.config(config.ravenDSN, {
-	autoBreadcrumbs: true
+	autoBreadcrumbs: true,
+	dataCallback: function (data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
 }).install();
 
 export class ShowGameCommand extends Commando.Command {

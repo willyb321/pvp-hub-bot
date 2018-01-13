@@ -5,8 +5,30 @@
  * ignore
  */
 import * as Discord from 'discord.js';
+import {basename} from "path";
+import * as Raven from "raven";
+
+
+
 
 export const config = require('../config.json');
+
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true,
+	dataCallback: function (data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
+}).install();
 
 export interface ICurrentStatus {
 	currentUsers: Map<string, Discord.User[]>;

@@ -1,6 +1,26 @@
 import * as mongoose from 'mongoose';
 import * as nanoid from 'nanoid';
 import {config} from './utils';
+import {basename} from "path";
+import * as Raven from "raven";
+
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true,
+	dataCallback: function (data) { // source maps
+		const stacktrace = data.exception && data.exception[0].stacktrace;
+
+		if (stacktrace && stacktrace.frames) {
+			stacktrace.frames.forEach(frame => {
+				if (frame.filename.startsWith('/')) {
+					frame.filename = 'app:///' + basename(frame.filename);
+				}
+			});
+		}
+
+		return data;
+	}
+}).install();
+
 
 mongoose.connect(config.mongoURL);
 
