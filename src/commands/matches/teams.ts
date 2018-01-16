@@ -9,7 +9,7 @@ import * as Discord from 'discord.js';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
 import * as nanoid from 'nanoid';
-import {reset} from './reset';
+import {reset, resetCounters} from './reset';
 import {genMatchModel, IMatch, IMatchDoc, Iparticipants} from '../../db';
 import * as Commando from 'discord.js-commando';
 import {basename} from "path";
@@ -188,7 +188,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 
 				currentStatus.locked.set(msg.channel.id, true);
 				collectors.forEach(elem => elem.cleanup());
-				currentStatus.timeouts.set(msg.channel.id, setTimeout(() => reset(msg, true), 120000));
+				currentStatus.timeouts.set(msg.channel.id, setTimeout(() => resetCounters(msg), 120000));
 			});
 		})
 		.catch(err => {

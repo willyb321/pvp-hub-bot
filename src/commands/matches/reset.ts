@@ -63,7 +63,7 @@ export function reset(message: Commando.CommandoMessage, timeout?: boolean) {
 	return resetCounters(message);
 }
 
-function resetCounters(message: Commando.CommandoMessage) {
+export function resetCounters(message: Commando.CommandoMessage) {
 	if (!message.message) {
 		return;
 	}
