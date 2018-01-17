@@ -188,7 +188,10 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 
 				currentStatus.locked.set(msg.channel.id, true);
 				collectors.forEach(elem => elem.cleanup());
-				currentStatus.timeouts.set(msg.channel.id, setTimeout(() => resetCounters(msg), 120000));
+				const timeout = setTimeout(() => {
+					resetCounters(msg);
+				}, 120000);
+				currentStatus.timeouts.set(msg.channel.id, timeout);
 			});
 		})
 		.catch(err => {

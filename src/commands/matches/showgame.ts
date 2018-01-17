@@ -65,8 +65,8 @@ export class ShowGameCommand extends Commando.Command {
 					embed.addField('Time when first ?reg', res.startQueue);
 					embed.addField('Filled Time', res.filledTime);
 					embed.addField('Winning Team:', res.result);
-					embed.addField('Time to select teams (minutes)', res.teamSelectionSec);
-					embed.addField('Amount of rerolls', res.rerollCount || 'Unknown');
+					embed.addField('Time to select teams (secs)', Math.round(res.teamSelectionSec * 60));
+					embed.addField('Amount of rerolls', res.rerollCount);
 					const t1 = [];
 					const t2 = [];
 					for (const i of res.participants) {

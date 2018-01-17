@@ -52,7 +52,7 @@ export class RemoveCommand extends Commando.Command {
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return;
 		}
-		if (!message.message.member || !message.message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+		if (!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			console.log('No perms');
 			return;
 		}

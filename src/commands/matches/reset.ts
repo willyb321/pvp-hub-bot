@@ -64,24 +64,24 @@ export function reset(message: Commando.CommandoMessage, timeout?: boolean) {
 }
 
 export function resetCounters(message: Commando.CommandoMessage) {
-	if (!message.message) {
+	if (!message.channel) {
 		return;
 	}
 	if (!config.allowedChannels.includes(message.channel.id)) {
 		return;
 	}
-	currentStatus.currentUsers.set(message.message.channel.id, []);
-	currentStatus.teams.set(message.message.channel.id, []);
-	if (currentStatus.timeouts.has(message.message.channel.id)) {
-		clearTimeout(currentStatus.timeouts.get(message.message.channel.id));
+	currentStatus.currentUsers.set(message.channel.id, []);
+	currentStatus.teams.set(message.channel.id, []);
+	if (currentStatus.timeouts.has(message.channel.id)) {
+		clearTimeout(currentStatus.timeouts.get(message.channel.id));
 	}
-	currentStatus.timeouts.delete(message.message.channel.id);
-	currentStatus.locked.delete(message.message.channel.id);
-	currentStatus.teamMessage.delete(message.message.channel.id);
-	currentStatus.teamsNumber.delete(message.message.channel.id);
-	currentStatus.queueStartTimes.delete(message.message.channel.id);
-	currentStatus.queueEndTimes.delete(message.message.channel.id);
-	currentStatus.queueTeamTimes.delete(message.message.channel.id);
+	currentStatus.timeouts.delete(message.channel.id);
+	currentStatus.locked.delete(message.channel.id);
+	currentStatus.teamMessage.delete(message.channel.id);
+	currentStatus.teamsNumber.delete(message.channel.id);
+	currentStatus.queueStartTimes.delete(message.channel.id);
+	currentStatus.queueEndTimes.delete(message.channel.id);
+	currentStatus.queueTeamTimes.delete(message.channel.id);
 	collectors.forEach(elem => elem.cleanup());
 	collectors.slice(0, collectors.length);
 	return message.channel.send('New session created.');
