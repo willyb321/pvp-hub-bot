@@ -36,10 +36,9 @@ export class ResultCommand extends Commando.Command {
 			name: 'result',
 			group: 'matches',
 			memberName: 'result',
-			description: 'Gets queue for current channel.',
-			details: 'Gets queue for current channel.',
+			description: '[Mod] Set result for match. Doesn\'t affect matchmaking.',
+			details: '[Mod] Set result for match. Doesn\'t affect matchmaking.',
 			examples: ['result 13 1'],
-
 			args: [
 				{
 					key: 'matchNum',
