@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import * as Raven from 'raven';
 import * as nanoid from 'nanoid';
 import {reset, resetCounters} from './reset';
-import {genMatchModel, IMatch, IMatchDoc, Iparticipants} from '../../db';
+import {genMatchModel, IMatch, IMatchDoc, IParticipants} from '../../db';
 import * as Commando from 'discord.js-commando';
 import {basename} from "path";
 
@@ -150,7 +150,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				console.log('Locking it in!');
 				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id));
-				const participants: Iparticipants[] = [];
+				const participants: IParticipants[] = [];
 				const channel: any = msg.channel;
 				let lobby;
 				try {

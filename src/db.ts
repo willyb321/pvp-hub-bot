@@ -35,7 +35,7 @@ const participantsSchema = new mongoose.Schema({
 	team: Number
 });
 
-export interface Iparticipants {
+export interface IParticipants {
 	id: string;
 	team: number;
 }
@@ -58,7 +58,7 @@ export interface IMatch {
 	startQueue: String;
 	filledTime:  String;
 	result: number;
-	participants: Iparticipants[];
+	participants: IParticipants[];
 	teamSelectionSec: number;
 	rerollCount: number;
 }
@@ -71,7 +71,7 @@ export interface IMatchModel extends mongoose.Model<IMatchDoc> {
 
 }
 
-export const Match: any = mongoose.model('match', matchSchema);
+export const Match: IMatchModel = mongoose.model('match', matchSchema);
 
 const CounterSchema = new mongoose.Schema({
     _id: {type: String, required: true},
@@ -108,6 +108,7 @@ const userSchema = new mongoose.Schema({
 	won: {type: [wonLossSchema]},
 	lost: {type: [wonLossSchema]}
 });
+
 export interface IUser {
 	nanoid: string;
 	discordID: string;

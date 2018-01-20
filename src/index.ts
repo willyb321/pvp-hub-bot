@@ -9,7 +9,7 @@ import 'source-map-support/register';
 import * as Commando from 'discord.js-commando';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
-import {config} from './utils';
+import {config, currentStatus} from './utils';
 import {basename, join} from "path";
 import * as sqlite from "sqlite";
 import {oneLine} from 'common-tags';
@@ -36,7 +36,6 @@ export const client = new Commando.Client({
 	commandPrefix: '?',
 	unknownCommandResponse: false
 });
-const {token} = config;
 
 client
 	.on('error', console.error)
@@ -98,7 +97,9 @@ client.on('ready', () => {
 	console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 	client.user.setGame('the pew pews')
 		.then(() => {
-			// no-op
+			config.allowedChannels.forEach(elem => {
+				currentStatus.currentUsers.set(elem, []);
+			})
 		})
 		.catch(err => {
 			Raven.captureException(err);
@@ -113,7 +114,7 @@ client.registry
 	.registerCommandsIn(join(__dirname, 'commands', 'misc'));
 
 // Log our bot in
-client.login(token)
+client.login(config.token)
 	.then(() => {
 		console.log('PvP Hub bot logged in.');
 	})
