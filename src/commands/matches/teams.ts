@@ -71,8 +71,9 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 		collectors.forEach(elem => elem.cleanup());
 		collectors.slice(0, collectors.length);
 	}
+	const curTeams = currentStatus.teams.get(message.channel.id);
 	const curTeamLength =
-	(currentStatus.teams.has(message.channel.id) && currentStatus.teams.get(message.channel.id)[0] && currentStatus.teams.get(message.channel.id)[1]) ?
+	(curTeams && curTeams[0] && curTeams[1]) ?
 		currentStatus.teams.get(message.channel.id)[0].length + currentStatus.teams.get(message.channel.id)[1].length
 		: 0;
 	if (currentStatus.teams.get(message.channel.id).length === 2 && currentStatus.teams.get(message.channel.id).length !== curTeamLength) {
@@ -148,7 +149,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				console.log(reason);
 				console.log('Locking it in!');
 				const curTime = Math.floor(new Date().getSeconds());
-				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id)) / 60;
+				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id));
 				const participants: Iparticipants[] = [];
 				const channel: any = msg.channel;
 				let lobby;
@@ -176,7 +177,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 
 				const doc = genMatchModel(matchInfo);
 				doc.save()
-				.then( (savedDoc: IMatchDoc) => {
+				.then((savedDoc: IMatchDoc) => {
 					msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers.get(msg.channel.id).join(' ')}`);
 					msg.channel.send({embed: currentStatus.teamMessage.get(msg.channel.id)});
 					currentStatus.queueTeamTimes.delete(msg.channel.id);
@@ -190,7 +191,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				collectors.forEach(elem => elem.cleanup());
 				const timeout = setTimeout(() => {
 					resetCounters(msg);
-				}, 120000);
+				}, 3000);
 				currentStatus.timeouts.set(msg.channel.id, timeout);
 			});
 		})
