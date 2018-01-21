@@ -10,6 +10,7 @@ import * as Raven from 'raven';
 import {teams} from './teams';
 import * as Commando from 'discord.js-commando';
 import {basename} from "path";
+import { resetCounters } from './reset';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -88,6 +89,14 @@ export class RegisterCommand extends Commando.Command {
 		} else if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
 			currentStatus.currentUsers.get(message.channel.id).push(message.author);
 			message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers.get(message.channel.id).length} / ${currentStatus.teamsNumber.get(message.channel.id) * 2}`);
+			if (currentStatus.timeouts.has(message.channel.id)) {
+				clearTimeout(currentStatus.timeouts.get(message.channel.id));
+				currentStatus.timeouts.delete(message.channel.id);
+			}
+			const timeout = setTimeout(() => {
+				resetCounters(message);
+			}, 5400000);
+			currentStatus.timeouts.set(message.channel.id, timeout);
 			if (currentStatus.currentUsers.get(message.channel.id).length === teamsNumber * 2) {
 				message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers.get(message.channel.id).join(' ')}`);
 				teams(message);
