@@ -220,12 +220,12 @@ export class TeamsCommand extends Commando.Command {
 }
 
 function unregFromOtherQueues(message) {
-	for (const i of config.allowedChannels) {
-		if (currentStatus.currentUsers.has(i)) {
-			const found = currentStatus.currentUsers.get(i).findIndex(elem => elem.id === message.author.id);
+	currentStatus.currentUsers.forEach((val, key) => {
+		if (currentStatus.currentUsers.has(key)) {
+			const found = currentStatus.currentUsers.get(key).findIndex(elem => elem.id === message.author.id);
 			if (found > -1) {
-				currentStatus.currentUsers.get(i).splice(found, 1);
+				currentStatus.currentUsers.get(key).splice(found, 1);
 			}
 		}
-	}
+	})
 }
