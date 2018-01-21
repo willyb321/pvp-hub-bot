@@ -33,7 +33,7 @@ Raven.config(config.ravenDSN, {
 const flip = () => (Math.floor(Math.random() * 2) == 0) ? 'heads' : 'tails';
 
 
-export class StatusCommand extends Commando.Command {
+export class FlipCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {
 			name: 'flip',
