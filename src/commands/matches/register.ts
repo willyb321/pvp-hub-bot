@@ -99,6 +99,10 @@ export class RegisterCommand extends Commando.Command {
 			currentStatus.timeouts.set(message.channel.id, timeout);
 			if (currentStatus.currentUsers.get(message.channel.id).length === teamsNumber * 2) {
 				message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers.get(message.channel.id).join(' ')}`);
+				if (currentStatus.timeouts.has(message.channel.id)) {
+					clearTimeout(currentStatus.timeouts.get(message.channel.id));
+					currentStatus.timeouts.delete(message.channel.id);
+				}
 				teams(message);
 			}
 			return;
