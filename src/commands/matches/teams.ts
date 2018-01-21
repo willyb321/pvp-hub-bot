@@ -109,6 +109,7 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 		embed.addField(`Team ${index + 1}`, inTeam.join('\n'));
 	});
 	currentStatus.teamMessage.set(message.channel.id, embed);
+	unregFromOtherQueues(message);
 	if (!currentStatus.queueTeamTimes.has(message.channel.id)) {
 		currentStatus.queueTeamTimes.set(message.channel.id, Math.floor(new Date().getSeconds()));
 	}
@@ -215,5 +216,16 @@ export class TeamsCommand extends Commando.Command {
 
 	async run(message) {
 		teams(message);
+	}
+}
+
+function unregFromOtherQueues(message) {
+	for (const i of config.allowedChannels) {
+		if (currentStatus.currentUsers.has(i)) {
+			const found = currentStatus.currentUsers.get(i).findIndex(elem => elem.id === message.author.id);
+			if (found > -1) {
+				currentStatus.currentUsers.get(i).splice(found, 1);
+			}
+		}
 	}
 }
