@@ -42,7 +42,7 @@ export class PromoteCommand extends Commando.Command {
 			group: 'misc',
 			memberName: 'promote',
 			description: 'Promote a match.',
-			details: 'Promote a matchcoin.',
+			details: 'Promote a match.',
 			examples: ['promote', 'p']
 		});
 	}
