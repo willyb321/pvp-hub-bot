@@ -147,8 +147,8 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 			collectors.push(reroll);
 			reroll.on('end', reason => {
 				console.log(reason);
+				unregFromOtherQueues();
 				console.log('Locking it in!');
-				unregFromOtherQueues(msg);
 				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id));
 				const participants: IParticipants[] = [];
@@ -219,13 +219,14 @@ export class TeamsCommand extends Commando.Command {
 	}
 }
 
-function unregFromOtherQueues(message) {
+function unregFromOtherQueues() {
+	const ids = [];
+	currentStatus.currentUsers.forEach(val => val.forEach(user => ids.push(user.id)));
 	currentStatus.currentUsers.forEach((val, key) => {
-		if (currentStatus.currentUsers.has(key)) {
-			const found = currentStatus.currentUsers.get(key).findIndex(elem => elem.id === message.author.id);
-			if (found > -1) {
-				currentStatus.currentUsers.get(key).splice(found, 1);
+		ids.forEach(id => {
+			if (currentStatus.currentUsers.get(key).findIndex(elem => elem.id === id) > -1) {
+				currentStatus.currentUsers.get(key).splice(currentStatus.currentUsers.get(key).findIndex(elem => elem.id === id), 1);
 			}
-		}
+		});
 	})
 }
