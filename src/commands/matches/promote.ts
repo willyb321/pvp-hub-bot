@@ -40,18 +40,35 @@ export class PromoteCommand extends Commando.Command {
 			aliases: ['p'],
 			throttling: {usages: 1, duration: 60},
 			group: 'misc',
-			memberName: 'flip',
-			description: 'Flip a theoretical coin.',
-			details: 'Flip a theoretical coin.',
-			examples: ['flip']
+			memberName: 'promote',
+			description: 'Promote a match.',
+			details: 'Promote a matchcoin.',
+			examples: ['promote', 'p']
 		});
 	}
 
 	async run(msg, args) {
+		if (!currentStatus.teamsNumber.has(msg.channel.id)) {
+			let teamsNumber: number;
+			try {
+				if (msg.channel.type !== 'text') {
+					return;
+				}
+				const channel: any = msg.channel;
+				teamsNumber = parseInt(channel.name.split('v')[0]);
+			} catch (err) {
+				console.log(err);
+				Raven.captureException(err);
+			}
+			if (!teamsNumber) {
+				teamsNumber = 2;
+			}
+			currentStatus.teamsNumber.set(msg.channel.id, teamsNumber);
+		}
 		const max = currentStatus.teamsNumber.get(msg.channel.id) * 2;
 		const current = currentStatus.currentUsers.get(msg.channel.id).length;
 
-		const mesg = `@here only ${max - current} needed for ${msg.channel.toString()}`
+		const mesg = `@ahere only ${max - current} needed for ${msg.channel.toString()}`
 		return msg.channel.send(mesg);
 	}
 
