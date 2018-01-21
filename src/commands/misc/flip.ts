@@ -47,8 +47,8 @@ export class FlipCommand extends Commando.Command {
 
 	async run(msg, args) {
 		const flipped = flip();
-		console.log(`Coin flipped: ${flipped}`)
-		const embed = genEmbed('Coin Flipped', flipped);
+		console.log(`Coin flipped by ${msg.author.toString()}: ${flipped}`)
+		const embed = genEmbed('Coin Flipped by ' + msg.author.toString(), flipped);
 		return msg.channel.send({embed});
 	}
 
