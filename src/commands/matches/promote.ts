@@ -68,7 +68,7 @@ export class PromoteCommand extends Commando.Command {
 		const max = currentStatus.teamsNumber.get(msg.channel.id) * 2;
 		const current = currentStatus.currentUsers.get(msg.channel.id).length;
 
-		const mesg = `@ahere only ${max - current} needed for ${msg.channel.toString()}`
+		const mesg = `@here only ${max - current} needed for ${msg.channel.toString()}`
 		return msg.channel.send(mesg);
 	}
 
