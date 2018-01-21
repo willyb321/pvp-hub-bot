@@ -109,7 +109,6 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 		embed.addField(`Team ${index + 1}`, inTeam.join('\n'));
 	});
 	currentStatus.teamMessage.set(message.channel.id, embed);
-	unregFromOtherQueues(message);
 	if (!currentStatus.queueTeamTimes.has(message.channel.id)) {
 		currentStatus.queueTeamTimes.set(message.channel.id, Math.floor(new Date().getSeconds()));
 	}
@@ -149,6 +148,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 			reroll.on('end', reason => {
 				console.log(reason);
 				console.log('Locking it in!');
+				unregFromOtherQueues(msg);
 				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id));
 				const participants: IParticipants[] = [];
@@ -162,7 +162,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				}
 				currentStatus.teams.get(msg.channel.id).forEach((elem, ind) => {
 					elem.forEach(user => {
-						participants.push({id: user.id, team: ind + 1});
+						participants.push({id: user.id, team: ind + 1, discordTag: user.tag});
 					});
 				});
 				const matchInfo: IMatch = {

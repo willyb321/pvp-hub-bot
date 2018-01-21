@@ -32,12 +32,14 @@ db.once('open', () => {
 
 const participantsSchema = new mongoose.Schema({
 	id: String,
-	team: Number
+	team: Number,
+	discordTag: String
 });
 
 export interface IParticipants {
 	id: string;
 	team: number;
+	discordTag: string;
 }
 
 const matchSchema = new mongoose.Schema({
