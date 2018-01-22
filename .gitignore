@@ -137,3 +137,5 @@ config\.json
 
 docs/
 src/config.ts
+
+\.idea/
