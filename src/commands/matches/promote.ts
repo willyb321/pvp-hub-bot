@@ -45,6 +45,9 @@ export class PromoteCommand extends Commando.Command {
 		});
 	}
 	hasPermission(msg) {
+		if (!currentStatus.currentUsers.has(msg.channel.id)) {
+			return false
+		}
 		return currentStatus.currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id) !== undefined
 	}
 	async run(msg, args) {
