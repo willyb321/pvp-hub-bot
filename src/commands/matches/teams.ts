@@ -9,15 +9,15 @@ import * as Discord from 'discord.js';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
 import * as nanoid from 'nanoid';
-import {reset, resetCounters} from './reset';
+import {resetCounters} from './reset';
 import {genMatchModel, IMatch, IMatchDoc, IParticipants} from '../../db';
 import * as Commando from 'discord.js-commando';
-import {basename} from "path";
+import {basename} from 'path';
 
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -58,7 +58,7 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 		if (message.channel.type !== 'text') {
 			return;
 		}
-		const channel: any = message.channel;
+		const channel = message.channel;
 		teamsNumber = parseInt(channel.name.split('v')[0]);
 	} catch (err) {
 		console.log(err);
@@ -90,7 +90,7 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 			.catch(err => {
 				console.error(err);
 				Raven.captureException(err);
-			})
+			});
 	}
 	if (!teamsNumber) {
 		teamsNumber = 2;
@@ -228,5 +228,5 @@ function unregFromOtherQueues() {
 				currentStatus.currentUsers.get(key).splice(currentStatus.currentUsers.get(key).findIndex(elem => elem.id === id), 1);
 			}
 		});
-	})
+	});
 }

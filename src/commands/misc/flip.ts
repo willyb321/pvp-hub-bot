@@ -4,15 +4,14 @@
 /**
  * ignore
  */
-import * as Discord from 'discord.js';
-import {config, genEmbed} from "../../utils";
+import {config, genEmbed} from '../../utils';
 import * as Commando from 'discord.js-commando';
-import {basename} from "path";
-import * as Raven from "raven";
+import {basename} from 'path';
+import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -32,7 +31,6 @@ Raven.config(config.ravenDSN, {
  */
 const flip = () => (Math.floor(Math.random() * 2) == 0) ? 'heads' : 'tails';
 
-
 export class FlipCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {
@@ -51,9 +49,9 @@ export class FlipCommand extends Commando.Command {
 			return;
 		}
 		const flipped = flip();
-		console.log(`Coin flipped by ${msg.author.toString()}: ${flipped}`)
+		console.log(`Coin flipped by ${msg.author.toString()}: ${flipped}`);
 		const embed = genEmbed('Coin Flipped', flipped);
-		embed.addField('By:', msg.author.toString())
+		embed.addField('By:', msg.author.toString());
 		return msg.channel.send({embed});
 	}
 

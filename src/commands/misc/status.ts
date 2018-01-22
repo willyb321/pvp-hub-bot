@@ -4,15 +4,14 @@
 /**
  * ignore
  */
-import * as Discord from 'discord.js';
-import {config, genEmbed} from "../../utils";
+import {config, genEmbed} from '../../utils';
 import * as Commando from 'discord.js-commando';
-import {basename} from "path";
-import * as Raven from "raven";
+import {basename} from 'path';
+import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -26,7 +25,6 @@ Raven.config(config.ravenDSN, {
 		return data;
 	}
 }).install();
-
 
 export class StatusCommand extends Commando.Command {
 	constructor(client) {

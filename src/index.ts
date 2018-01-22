@@ -7,16 +7,15 @@
 // Import modules
 import 'source-map-support/register';
 import * as Commando from 'discord.js-commando';
-import * as _ from 'lodash';
 import * as Raven from 'raven';
 import {config, currentStatus} from './utils';
-import {basename, join} from "path";
-import * as sqlite from "sqlite";
+import {basename, join} from 'path';
+import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -44,7 +43,7 @@ client
 	.on('disconnect', () => console.warn('Disconnected!'))
 	.on('reconnecting', () => console.warn('Reconnecting...'))
 	.on('commandError', (cmd, err) => {
-		if(err instanceof Commando.FriendlyError) return;
+		if (err instanceof Commando.FriendlyError) { return; }
 		console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
 	})
 	.on('commandBlocked', (msg, reason) => {
@@ -81,7 +80,7 @@ client.setProvider(
 	Raven.captureException(err);
 });
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
 	console.error(err);
 	Raven.captureException(err);
 });
@@ -99,7 +98,7 @@ client.on('ready', () => {
 		.then(() => {
 			config.allowedChannels.forEach(elem => {
 				currentStatus.currentUsers.set(elem, []);
-			})
+			});
 		})
 		.catch(err => {
 			Raven.captureException(err);

@@ -5,17 +5,15 @@
  * ignore
  */
 import * as Discord from 'discord.js';
-import {basename} from "path";
-import * as Raven from "raven";
+import {basename} from 'path';
+import * as Raven from 'raven';
 
-
-
-
-export const config = require('../config.json');
+import {config} from './config';
+export {config} from './config';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {

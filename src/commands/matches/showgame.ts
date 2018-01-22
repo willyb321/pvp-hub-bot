@@ -5,15 +5,14 @@
  * ignore
  */
 import {config, genEmbed} from '../../utils';
-import * as Discord from 'discord.js';
 import * as Raven from 'raven';
 import {IMatchDoc, Match} from '../../db';
 import * as Commando from 'discord.js-commando';
-import {basename} from "path";
+import {basename} from 'path';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {

@@ -5,14 +5,13 @@
  * ignore
  */
 import {currentStatus, config} from '../../utils';
-import * as Discord from 'discord.js';
 import * as Commando from 'discord.js-commando';
-import {basename} from "path";
-import * as Raven from "raven";
+import {basename} from 'path';
+import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -26,7 +25,6 @@ Raven.config(config.ravenDSN, {
 		return data;
 	}
 }).install();
-
 
 export class RemoveCommand extends Commando.Command {
 	constructor(client) {
@@ -57,7 +55,7 @@ export class RemoveCommand extends Commando.Command {
 			return;
 		}
 		if (!args.user) {
-			return message.reply('Nobody specified to remove')
+			return message.reply('Nobody specified to remove');
 		}
 		if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === args.user.id)) {
 			return message.reply('User isn\'t registered.');

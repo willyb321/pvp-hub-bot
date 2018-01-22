@@ -1,12 +1,12 @@
 import * as mongoose from 'mongoose';
 import * as nanoid from 'nanoid';
 import {config} from './utils';
-import {basename} from "path";
-import * as Raven from "raven";
+import {basename} from 'path';
+import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -20,7 +20,6 @@ Raven.config(config.ravenDSN, {
 		return data;
 	}
 }).install();
-
 
 mongoose.connect(config.mongoURL);
 

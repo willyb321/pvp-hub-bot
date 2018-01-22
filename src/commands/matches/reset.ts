@@ -5,15 +5,14 @@
  * ignore
  */
 import {currentStatus, config} from '../../utils';
-import * as Discord from 'discord.js';
 import {collectors} from './teams';
 import * as Commando from 'discord.js-commando';
-import {basename} from "path";
-import * as Raven from "raven";
+import {basename} from 'path';
+import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -45,7 +44,6 @@ export class NewCommand extends Commando.Command {
 	}
 
 }
-
 
 export function reset(message: Commando.CommandoMessage, timeout?: boolean) {
 	if (timeout) {

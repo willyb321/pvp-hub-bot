@@ -5,16 +5,15 @@
  * ignore
  */
 import {currentStatus, config} from '../../utils';
-import * as Discord from 'discord.js';
 import * as Raven from 'raven';
 import {teams} from './teams';
 import * as Commando from 'discord.js-commando';
-import {basename} from "path";
-import { resetCounters } from './reset';
+import {basename} from 'path';
+import {resetCounters} from './reset';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback: function (data) { // source maps
+	dataCallback (data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -59,7 +58,7 @@ export class RegisterCommand extends Commando.Command {
 			if (message.channel.type !== 'text') {
 				return;
 			}
-			const channel: any = message.channel;
+			const channel = message.channel;
 			teamsNumber = parseInt(channel.name.split('v')[0]);
 		} catch (err) {
 			Raven.captureException(err);
@@ -72,7 +71,7 @@ export class RegisterCommand extends Commando.Command {
 			if (message.channel.type !== 'text') {
 				return;
 			}
-			const channel: any = message.channel;
+			const channel = message.channel;
 			teamsNumber = parseInt(channel.name.split('v')[0]);
 		} catch (err) {
 			Raven.captureException(err);
