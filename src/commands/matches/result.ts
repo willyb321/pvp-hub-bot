@@ -53,17 +53,20 @@ export class ResultCommand extends Commando.Command {
 		});
 	}
 
-	async run(message, args) {
+	hasPermission(message) {
 		if (!config.allowedChannels.includes(message.channel.id)) {
-			return;
+			return false;
 		}
+
+		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+			return false;
+		}
+		return true;
+	}
+
+	async run(message, args) {
 		const matchNum = args.matchNum;
 		const winningTeam = args.winning;
-		console.log(message.content.split(' '));
-		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			console.log('Not modifying game.');
-			return message.channel.send('No permission.');
-		}
 		console.time('Start query');
 		Match.findOneAndUpdate({matchNum}, {result: winningTeam})
 			.then(res => {

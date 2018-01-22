@@ -46,14 +46,18 @@ export class RemoveCommand extends Commando.Command {
 		});
 	}
 
-	async run(message, args) {
+	hasPermission(message) {
 		if (!config.allowedChannels.includes(message.channel.id)) {
-			return;
+			return false;
 		}
 		if (!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			console.log('No perms');
-			return;
+			return false;
 		}
+		return true
+	}
+
+	async run(message, args) {
+
 		if (!args.user) {
 			return message.reply('Nobody specified to remove');
 		}

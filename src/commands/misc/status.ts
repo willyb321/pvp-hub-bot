@@ -38,6 +38,14 @@ export class StatusCommand extends Commando.Command {
 		});
 	}
 
+	hasPermission(msg) {
+		if (!msg.member || !msg.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	async run(msg, args) {
 		const embed = genEmbed('PvP Hub Bot', 'PvP Hub Bot Status');
 		embed

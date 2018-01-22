@@ -39,11 +39,20 @@ export class RestartCommand extends Commando.Command {
 		});
 	}
 
-	async run(message) {
-		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			console.log('Not restarting');
-			return;
+	hasPermission(msg) {
+		if (client.isOwner(msg.author)) {
+			return true
 		}
+		if (!msg.member) {
+			return false;
+		}
+		if (!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+			return false;
+		}
+		return true
+	}
+
+	async run(message) {
 		console.log('Restarting');
 		message.channel.send(':wave:')
 			.then(() => {

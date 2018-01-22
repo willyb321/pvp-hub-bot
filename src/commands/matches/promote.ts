@@ -44,7 +44,9 @@ export class PromoteCommand extends Commando.Command {
 			examples: ['promote', 'p']
 		});
 	}
-
+	hasPermission(msg) {
+		return currentStatus.currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id) !== undefined
+	}
 	async run(msg, args) {
 		if (!currentStatus.teamsNumber.has(msg.channel.id)) {
 			let teamsNumber: number;

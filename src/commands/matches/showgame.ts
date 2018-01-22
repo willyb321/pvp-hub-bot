@@ -48,6 +48,13 @@ export class ShowGameCommand extends Commando.Command {
 		});
 	}
 
+	hasPermission(message) {
+		if (!config.allowedChannels.includes(message.channel.id)) {
+			return false;
+		}
+		return true;
+	}
+
 	async run(message, args) {
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return;

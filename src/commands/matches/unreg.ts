@@ -38,6 +38,16 @@ export class UnregCommand extends Commando.Command {
 		});
 	}
 
+	hasPermission(message) {
+		if (!config.allowedChannels.includes(message.channel.id)) {
+			return false;
+		}
+		if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
+			return false;
+		}
+		return true;
+	}
+
 	async run(message) {
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return;

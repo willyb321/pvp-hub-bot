@@ -43,11 +43,15 @@ export class FlipCommand extends Commando.Command {
 		});
 	}
 
-	async run(msg, args) {
+	hasPermission(msg) {
 		if (!msg.member || !msg.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			console.log('No perms');
-			return;
+			return false;
+		} else {
+			return true;
 		}
+	}
+
+	async run(msg, args) {
 		const flipped = flip();
 		console.log(`Coin flipped by ${msg.author.toString()}: ${flipped}`);
 		const embed = genEmbed('Coin Flipped', flipped);

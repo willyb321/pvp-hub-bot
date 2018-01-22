@@ -38,7 +38,17 @@ export class NewCommand extends Commando.Command {
 			examples: ['new']
 		});
 	}
+	hasPermission(message) {
+		if (!message.channel) {
+			return false;
+		}
 
+		if (!currentStatus.currentUsers.has(message.channel.id) || !currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
+			return false
+		}
+
+		return true
+	}
 	async run(message) {
 		reset(message);
 	}
@@ -50,7 +60,7 @@ export function reset(message: Commando.CommandoMessage, timeout?: boolean) {
 		return resetCounters(message);
 	}
 	if (!message.channel) {
-		return;
+		return
 	}
 	if (message.member && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 		return resetCounters(message);

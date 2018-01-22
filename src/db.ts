@@ -1,3 +1,9 @@
+/**
+ * @module Utils
+ */
+/**
+ * ignore
+ */
 import * as mongoose from 'mongoose';
 import * as nanoid from 'nanoid';
 import {config} from './utils';

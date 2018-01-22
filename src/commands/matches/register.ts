@@ -39,14 +39,17 @@ export class RegisterCommand extends Commando.Command {
 			examples: ['reg']
 		});
 	}
-
-	async run(message) {
+	hasPermission(message) {
 		if (!config.allowedChannels.includes(message.channel.id)) {
-			return;
+			return false;
 		}
 		if (message.channel.type !== 'text') {
-			return;
+			return false;
 		}
+		return true;
+	}
+	async run(message) {
+
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
 			currentStatus.currentUsers.set(message.channel.id, []);
 		}
