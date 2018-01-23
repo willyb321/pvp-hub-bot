@@ -10,6 +10,9 @@ import {IMatchDoc, Match} from '../../db';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 
+const PastebinAPI = require('pastebin-js')
+const pastebin = new PastebinAPI(config.pastebinKey);
+
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
 	dataCallback (data) { // source maps
@@ -53,8 +56,23 @@ export class NoResultsCommand extends Commando.Command {
 					for (const i of res) {
 						matches.push(i.matchNum);
 					}
-					embed.addField('Results:', matches.join('\n'));
-					message.channel.send({embed});
+					pastebin
+						.createPaste({
+							text: matches.join('\n'),
+							title: `Matches with no result for ${new Date().toISOString()}`,
+							expiration: '10M'
+						})
+						.then(data => {
+							console.log(data);
+							embed.addField('Full list', data);
+							embed.addField('Results:', matches.slice(-10).join('\n'));
+							message.channel.send({embed});
+						})
+						.fail(err => {
+							// Something went wrong
+							console.log(err);
+							Raven.captureException(err);
+						});
 				} else {
 					message.channel.send('No games found.');
 				}
