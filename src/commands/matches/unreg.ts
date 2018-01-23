@@ -66,6 +66,10 @@ export class UnregCommand extends Commando.Command {
 				currentStatus.rerollCount.delete(message.channel.id);
 				currentStatus.teamMessage.delete(message.channel.id);
 			}
+			if (currentStatus.timeouts.has(message.channel.id) && currentStatus.currentUsers.get(message.channel.id).length === 0) {
+				clearTimeout(currentStatus.timeouts.get(message.channel.id));
+				currentStatus.timeouts.delete(message.channel.id);
+			}
 			return;
 		}
 	}
