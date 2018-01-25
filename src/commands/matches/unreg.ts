@@ -45,7 +45,8 @@ export class UnregCommand extends Commando.Command {
 		if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 			return false;
 		}
-		return true;
+		return currentStatus.teams.get(message.channel.id).length !== 2;
+
 	}
 
 	async run(message) {
