@@ -136,7 +136,7 @@ export class RemoveMatchCommand extends Commando.Command {
 		let promises = [];
 		matchNum.forEach(match => {
 			console.log(match);
-			promises.push(Match.findOneAndRemove({matchNum: match.matchNum}))
+			promises.push(Match.findOneAndRemove({matchNum: match}))
 		});
 		Promise.all(promises)
 		.then(reses => {
