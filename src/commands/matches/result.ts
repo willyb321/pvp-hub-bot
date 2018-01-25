@@ -70,7 +70,7 @@ export class ResultCommand extends Commando.Command {
 		console.time('Start query');
 		Match.findOneAndUpdate({matchNum}, {result: winningTeam})
 			.then(res => {
-				if (res) {
+				if (res && winningTeam !== 12) {
 					console.timeEnd('Start query');
 					console.log(res);
 					const embed = genEmbed('Match Result', `Game #${matchNum}`);
@@ -82,6 +82,12 @@ export class ResultCommand extends Commando.Command {
 						}
 					}
 					embed.addField('Team Members', `${t.join('\n')}`);
+					message.channel.send({embed});
+				} else if (res && winningTeam === 12) {
+					console.timeEnd('Start query');
+					console.log(res);
+					const embed = genEmbed('Match Result', `Game #${matchNum}`);
+					embed.addField('Winning Team', 'Invalidated');
 					message.channel.send({embed});
 				}
 			})
