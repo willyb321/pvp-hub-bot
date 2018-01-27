@@ -42,7 +42,9 @@ export class NewCommand extends Commando.Command {
 		if (!message.channel) {
 			return false;
 		}
-
+		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+			return true
+		}
 		if (!currentStatus.currentUsers.has(message.channel.id) || !currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 			return false
 		}
