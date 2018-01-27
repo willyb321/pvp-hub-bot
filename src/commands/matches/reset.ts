@@ -88,6 +88,7 @@ export function resetCounters(message: Commando.CommandoMessage) {
 	currentStatus.timeouts.delete(message.channel.id);
 	currentStatus.locked.delete(message.channel.id);
 	currentStatus.teamMessage.delete(message.channel.id);
+	currentStatus.teams.delete(message.channel.id);
 	currentStatus.teamsNumber.delete(message.channel.id);
 	currentStatus.queueStartTimes.delete(message.channel.id);
 	currentStatus.queueEndTimes.delete(message.channel.id);
