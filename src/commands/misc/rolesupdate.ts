@@ -63,7 +63,7 @@ export class RolesCommand extends Commando.Command {
 		message.guild.members.forEach(elem => {
 			const promise = Match.find({"participants.id": elem.id});
 			promises.push(promise);
-			ids.push(elem.id);
+			ids.push(elem.displayName);
 		});
 		const botLogChannel = client.channels.get(config.botLogID) as TextChannel;
 		const logToBotSpam = msg => botLogChannel.send(msg);
