@@ -48,7 +48,7 @@ export class PromoteCommand extends Commando.Command {
 		if (!currentStatus.currentUsers.has(msg.channel.id)) {
 			return false
 		}
-		return currentStatus.currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id) !== undefined
+		return !!currentStatus.currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id)
 	}
 	async run(msg, args) {
 		if (!currentStatus.teamsNumber.has(msg.channel.id)) {
