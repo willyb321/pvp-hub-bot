@@ -89,15 +89,21 @@ export class RolesCommand extends Commando.Command {
 						if (member) {
 							const role = message.guild.roles.find('id', roleToGive);
 							if (role) {
+								let beforeRoleNames = [];
+								let afterRoleNames = [];
 								let botlogmsg = `${member.displayName} roles before modification:\n\`\`\`\n`;
 								member.roles.forEach(elem => {
 									botlogmsg += `${elem.name}\n`;
+									beforeRoleNames.push(elem.id);
 								});
 								botlogmsg += '```';
 								console.log(`Giving ${member.displayName} ${role.name} role`);
 								let roles = [role].concat(member.roles.array());
 								roles = _.uniqBy(roles, 'id');
-								if (!_.isEqual(roles, member.roles.array())) {
+								roles.forEach(elem => afterRoleNames.push(elem.id));
+								beforeRoleNames = beforeRoleNames.sort();
+								afterRoleNames = afterRoleNames.sort();
+								if (!_.isEqual(beforeRoleNames, afterRoleNames)) {
 									botlogmsg += `\n\n${member.displayName} roles after modification:\n\`\`\`\n`;
 									member.roles.forEach(elem => {
 										botlogmsg += `${elem.name}\n`;
