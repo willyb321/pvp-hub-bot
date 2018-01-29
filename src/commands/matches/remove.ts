@@ -50,10 +50,11 @@ export class RemoveCommand extends Commando.Command {
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return false;
 		}
-		if (!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+		if (!message.member) {
 			return false;
 		}
-		return true
+		return !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id));
+
 	}
 
 	async run(message, args) {

@@ -61,21 +61,18 @@ export class ResultCommand extends Commando.Command {
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return false;
 		}
+		return !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 
-		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			return false;
-		}
-		return true;
 	}
 
 	async run(message, args) {
 		const matchNum = args.matchNum;
 		const winningTeam = args.winning;
-		console.time('Start query');
+		console.time(`Query match #${matchNum}`);
 		Match.findOneAndUpdate({matchNum}, {result: winningTeam})
 			.then(res => {
 				if (res && winningTeam !== 12) {
-					console.timeEnd('Start query');
+					console.timeEnd(`Query match #${matchNum}`);
 					console.log(res);
 					const embed = genEmbed('Match Result', `Game #${matchNum}`);
 					embed.addField('Winning Team #', winningTeam);

@@ -47,7 +47,7 @@ export class NoResultsCommand extends Commando.Command {
 		return client.isOwner(msg.author);
 	}
 
-	async run(message, args) {
+	async run(message) {
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return;
 		}

@@ -46,10 +46,8 @@ export class RestartCommand extends Commando.Command {
 		if (!msg.member) {
 			return false;
 		}
-		if (!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			return false;
-		}
-		return true
+		return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
+
 	}
 
 	async run(message) {

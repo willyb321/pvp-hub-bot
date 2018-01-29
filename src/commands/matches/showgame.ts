@@ -49,10 +49,7 @@ export class ShowGameCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
-		if (!config.allowedChannels.includes(message.channel.id)) {
-			return false;
-		}
-		return true;
+		return config.allowedChannels.includes(message.channel.id);
 	}
 
 	async run(message, args) {
@@ -60,11 +57,11 @@ export class ShowGameCommand extends Commando.Command {
 			return;
 		}
 		const matchNum = args.match;
-		console.time('Start query');
+		console.time(`Query match #${matchNum}`);
 		Match.findOne({matchNum})
 			.then((res: IMatchDoc) => {
 				if (res) {
-					console.timeEnd('Start query');
+					console.timeEnd(`Query match #${matchNum}`);
 					console.log(res);
 					const embed = genEmbed('Match Info', `Game #${matchNum}`);
 					embed.addField('Lobby', res.lobby);

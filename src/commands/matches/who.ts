@@ -43,10 +43,10 @@ export class WhoCommand extends Commando.Command {
 	}
 
 	async run(message) {
-
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
 			currentStatus.currentUsers.set(message.channel.id, []);
 		}
+		console.log(`Who command run in #${message.channel.name}`);
 		const embed = genEmbed('Current Queue:', `${currentStatus.currentUsers.get(message.channel.id).join('\n')}`);
 		if (!currentStatus.currentUsers.has(message.channel.id) || currentStatus.currentUsers.get(message.channel.id).length === 0) {
 			return message.channel.send(`Nobody currently registered for ${message.channel.toString()}.`);

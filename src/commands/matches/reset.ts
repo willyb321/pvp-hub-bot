@@ -39,17 +39,21 @@ export class NewCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		if (!message.channel || !message.member) {
+		if (!message.channel) {
+			return false;
+		}
+		if (!message.member) {
 			return false;
 		}
 		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			return true
 		}
-		if (!currentStatus.currentUsers.has(message.channel.id) || !currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
+		if (!currentStatus.currentUsers.has(message.channel.id)) {
 			return false
 		}
+		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
 
-		return true
+
 	}
 	async run(message) {
 		reset(message);

@@ -26,11 +26,6 @@ Raven.config(config.ravenDSN, {
 	}
 }).install();
 
-/**
- * Coin flip
- */
-const flip = () => (Math.floor(Math.random() * 2) == 0) ? 'heads' : 'tails';
-
 export class PromoteCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {

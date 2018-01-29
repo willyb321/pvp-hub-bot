@@ -29,6 +29,16 @@ Raven.config(config.ravenDSN, {
 		return data;
 	}
 }).install();
+process.on('uncaughtException', err => {
+	console.error(err);
+	Raven.captureException(err);
+});
+
+process.on('unhandledRejection', (err: Error) => {
+	console.error(err);
+	Raven.captureException(err);
+});
+
 // Create an instance of a Discord client
 export const client = new Commando.Client({
 	owner: config.ownerID,
@@ -76,16 +86,6 @@ client
 client.setProvider(
 	sqlite.open(join(__dirname, 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
 ).catch(err => {
-	console.error(err);
-	Raven.captureException(err);
-});
-
-process.on('uncaughtException', err => {
-	console.error(err);
-	Raven.captureException(err);
-});
-
-process.on('unhandledRejection', (err: Error) => {
 	console.error(err);
 	Raven.captureException(err);
 });

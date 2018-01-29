@@ -39,10 +39,11 @@ export class WhoCommand extends Commando.Command {
 		});
 	}
 
+	hasPermission(message) {
+		return config.allowedChannels.includes(message.channel.id);
+	}
+
 	async run(message) {
-		if (!config.allowedChannels.includes(message.channel.id)) {
-			return;
-		}
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
 			currentStatus.currentUsers.set(message.channel.id, []);
 		}
@@ -70,7 +71,7 @@ export class WhoCommand extends Commando.Command {
 		});
 		const embed = genEmbed('Current Queues:', embedString);
 
-		return [await message.channel.send({embed})];
+		return message.channel.send({embed});
 	}
 
 }

@@ -126,9 +126,8 @@ function teamsReactionReroll(msg: Discord.Message, threshold: number) {
 		.then(() => {
 			const reroll = new Discord.ReactionCollector(msg, filterReroll, {maxUsers: threshold});
 			collectors.push(reroll);
-			reroll.on('end', reason => {
-				console.log(reason);
-				console.log('Rerolling!');
+			reroll.on('end', (elems, reason) => {
+				console.log(`Reroll collector ended with reason: ${reason}`);
 				currentStatus.rerollCount.set(msg.channel.id, currentStatus.rerollCount.get(msg.channel.id) + 1);
 				collectors.forEach(elem => elem.cleanup());
 				teams(msg, true);
@@ -145,10 +144,9 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 
 			const reroll = new Discord.ReactionCollector(msg, filterApprove, {maxUsers: threshold});
 			collectors.push(reroll);
-			reroll.on('end', reason => {
-				console.log(reason);
+			reroll.on('end', (elems, reason) => {
+				console.log(`Approve collector ended with reason: ${reason}`);
 				unregFromOtherQueues();
-				console.log('Locking it in!');
 				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id));
 				const participants: IParticipants[] = [];
@@ -179,6 +177,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 				const doc = genMatchModel(matchInfo);
 				doc.save()
 				.then((savedDoc: IMatchDoc) => {
+					console.log(`Match #${savedDoc.matchNum} locked in.`);
 					msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers.get(msg.channel.id).join(' ')}`);
 					msg.channel.send({embed: currentStatus.teamMessage.get(msg.channel.id)});
 					currentStatus.queueTeamTimes.delete(msg.channel.id);
