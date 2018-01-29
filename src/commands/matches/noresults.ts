@@ -9,6 +9,7 @@ import * as Raven from 'raven';
 import {IMatchDoc, Match} from '../../db';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
+import {client} from "../../index";
 
 const PastebinAPI = require('pastebin-js')
 const pastebin = new PastebinAPI(config.pastebinKey);
@@ -40,6 +41,10 @@ export class NoResultsCommand extends Commando.Command {
 			details: 'Shows games with no results.',
 			examples: ['shownores']
 		});
+	}
+
+	hasPermission(msg) {
+		return client.isOwner(msg.author);
 	}
 
 	async run(message, args) {
