@@ -39,7 +39,7 @@ export class NewCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		if (!message.channel) {
+		if (!message.channel || !message.member) {
 			return false;
 		}
 		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
