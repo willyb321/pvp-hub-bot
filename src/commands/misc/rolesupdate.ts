@@ -87,12 +87,12 @@ export class RolesCommand extends Commando.Command {
 						if (member) {
 							const role = message.guild.roles.find('id', roleToGive);
 							if (role) {
-								console.log('Users roles before modification:');
+								console.log(`${member.tag} roles before modification:`);
 								member.roles.forEach(elem => console.log(elem.name));
 								console.log(`Giving ${member.displayName} ${role.name} role`);
 								let roles = [role].concat(member.roles.array());
 								roles = _.uniqBy(roles, 'id');
-								console.log('Users roles after modification:');
+								console.log(`${member.tag} roles after modification:`);
 								roles.forEach(elem => console.log(elem.name));
 								member.edit({roles: roles});
 							}
