@@ -48,6 +48,9 @@ export class RolesCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
+		if (!msg.channel) {
+			return false;
+		}
 		if (!msg.channel.members) {
 			return false;
 		}
