@@ -8,9 +8,9 @@ import {config} from '../../utils';
 import {client} from '../../index';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
-import {IMatch, IMatchDoc, IParticipants, Match} from '../../db';
+import {Match} from '../../db';
 import {basename} from 'path';
-import {Role, TextChannel} from "discord.js";
+import {TextChannel} from "discord.js";
 import * as _ from "lodash";
 
 const tenID = '407634274217492480';
@@ -90,25 +90,23 @@ export class RolesCommand extends Commando.Command {
 							const role = message.guild.roles.find('id', roleToGive);
 							if (role) {
 								let botlogmsg = `${member.displayName} roles before modification:\n\`\`\`\n`;
-								console.log(`${member.displayName} roles before modification:`);
 								member.roles.forEach(elem => {
-									console.log(elem.name);
 									botlogmsg += `${elem.name}\n`;
 								});
 								botlogmsg += '```';
 								console.log(`Giving ${member.displayName} ${role.name} role`);
 								let roles = [role].concat(member.roles.array());
 								roles = _.uniqBy(roles, 'id');
-								console.log(`${member.displayName} roles after modification:`);
-								botlogmsg += `\n\n${member.displayName} roles after modification:\n\`\`\`\n`;
-								member.roles.forEach(elem => {
-									console.log(elem.name);
-									botlogmsg += `${elem.name}\n`;
-								});
-								botlogmsg += '```';
-								member.edit({roles: roles});
-								console.log(botlogmsg)
-								logToBotSpam(botlogmsg);
+								if (!_.isEqual(roles, member.roles.array())) {
+									botlogmsg += `\n\n${member.displayName} roles after modification:\n\`\`\`\n`;
+									member.roles.forEach(elem => {
+										botlogmsg += `${elem.name}\n`;
+									});
+									botlogmsg += '```';
+									member.edit({roles: roles});
+									console.log(botlogmsg);
+									logToBotSpam(botlogmsg);
+								}
 							}
 						}
 					}
