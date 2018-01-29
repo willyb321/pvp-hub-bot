@@ -10,7 +10,7 @@ import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
 import {IMatch, IMatchDoc, IParticipants, Match} from '../../db';
 import {basename} from 'path';
-import {Role} from "discord.js";
+import {Role, TextChannel} from "discord.js";
 import * as _ from "lodash";
 
 const tenID = '407634274217492480';
@@ -48,10 +48,10 @@ export class RolesCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		if (!msg.channel) {
+		if (!msg.guild) {
 			return false;
 		}
-		if (!msg.channel.members) {
+		if (!msg.guild.members) {
 			return false;
 		}
 		return !!client.isOwner(msg.author);
@@ -65,6 +65,8 @@ export class RolesCommand extends Commando.Command {
 			promises.push(promise);
 			ids.push(elem.id);
 		});
+		const botLogChannel = client.channels.get(config.botLogID) as TextChannel;
+		const logToBotSpam = msg => botLogChannel.send(msg);
 		Promise.all(promises)
 			.then(users => {
 				users.forEach((elem, idx) => {
@@ -87,14 +89,26 @@ export class RolesCommand extends Commando.Command {
 						if (member) {
 							const role = message.guild.roles.find('id', roleToGive);
 							if (role) {
-								console.log(`${member.tag} roles before modification:`);
-								member.roles.forEach(elem => console.log(elem.name));
+								let botlogmsg = `${member.displayName} roles before modification:\n\`\`\`\n`;
+								console.log(`${member.displayName} roles before modification:`);
+								member.roles.forEach(elem => {
+									console.log(elem.name);
+									botlogmsg += `${elem.name}\n`;
+								});
+								botlogmsg += '```';
 								console.log(`Giving ${member.displayName} ${role.name} role`);
 								let roles = [role].concat(member.roles.array());
 								roles = _.uniqBy(roles, 'id');
-								console.log(`${member.tag} roles after modification:`);
-								roles.forEach(elem => console.log(elem.name));
+								console.log(`${member.displayName} roles after modification:`);
+								botlogmsg += `\n\n${member.displayName} roles after modification:\n\`\`\`\n`;
+								member.roles.forEach(elem => {
+									console.log(elem.name);
+									botlogmsg += `${elem.name}\n`;
+								});
+								botlogmsg += '```';
 								member.edit({roles: roles});
+								console.log(botlogmsg)
+								logToBotSpam(botlogmsg);
 							}
 						}
 					}
