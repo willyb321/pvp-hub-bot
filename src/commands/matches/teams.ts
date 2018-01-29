@@ -51,7 +51,7 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 		currentStatus.locked.set(message.channel.id, false);
 	}
 	if (currentStatus.locked.get(message.channel.id) === true) {
-		return message.reply({embed: currentStatus.teamMessage.get(message.channel.id)});
+		return message.replyEmbed({embed: currentStatus.teamMessage.get(message.channel.id)});
 	}
 	let teamsNumber: number;
 	try {
@@ -218,10 +218,8 @@ export class TeamsCommand extends Commando.Command {
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return false;
 		}
-		if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
-			return false;
-		}
-		return true;
+		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
+
 	}
 
 	async run(message) {

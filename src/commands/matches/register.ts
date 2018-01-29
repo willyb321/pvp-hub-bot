@@ -40,51 +40,34 @@ export class RegisterCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		if (!config.allowedChannels.includes(message.channel.id)) {
-			return false;
-		}
-		if (message.channel.type !== 'text') {
-			return false;
-		}
-		return true;
+		return config.allowedChannels.includes(message.channel.id)
 	}
 	async run(message) {
-
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
 			currentStatus.currentUsers.set(message.channel.id, []);
 		}
 		if (!currentStatus.queueStartTimes.has(message.channel.id)) {
 			currentStatus.queueStartTimes.set(message.channel.id, new Date());
 		}
-		let teamsNumber: number;
-		try {
-			if (message.channel.type !== 'text') {
-				return;
-			}
+		let teamsNumber = currentStatus.teamsNumber.get(message.channel.id);
+		if (!teamsNumber) {
 			const channel = message.channel;
-			teamsNumber = parseInt(channel.name.split('v')[0]);
-		} catch (err) {
-			Raven.captureException(err);
+			try {
+				teamsNumber = parseInt(channel.name.split('v')[0]);
+			} catch (err) {
+				console.error(err);
+				Raven.captureException(err);
+			}
+
+			if (!teamsNumber) {
+				teamsNumber = 2;
+			}
+
+			currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
 		}
 		if (!currentStatus.teams.has(message.channel.id)) {
 			currentStatus.teams.set(message.channel.id, []);
 		}
-
-		try {
-			if (message.channel.type !== 'text') {
-				return;
-			}
-			const channel = message.channel;
-			teamsNumber = parseInt(channel.name.split('v')[0]);
-		} catch (err) {
-			Raven.captureException(err);
-		}
-
-		if (!teamsNumber) {
-			teamsNumber = 2;
-		}
-
-		currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
 
 		if (currentStatus.currentUsers.get(message.channel.id).length >= teamsNumber * 2) {
 			return message.reply('Full!');

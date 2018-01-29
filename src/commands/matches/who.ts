@@ -39,10 +39,7 @@ export class WhoCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		if (!config.allowedChannels.includes(msg.channel.id)) {
-			return false;
-		}
-		return true;
+		return config.allowedChannels.includes(msg.channel.id);
 	}
 
 	async run(message) {
