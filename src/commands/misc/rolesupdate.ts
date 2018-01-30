@@ -107,7 +107,7 @@ export class RolesCommand extends Commando.Command {
 								afterRoleNames = afterRoleNames.sort();
 								if (!_.isEqual(beforeRoleNames, afterRoleNames)) {
 									botlogmsg += `\n\n${member.displayName} roles after modification:\n\`\`\`\n`;
-									member.roles.forEach(elem => {
+									roles.forEach(elem => {
 										botlogmsg += `${elem.name}\n`;
 									});
 									botlogmsg += '```';
