@@ -60,10 +60,12 @@ export class RolesCommand extends Commando.Command {
 	async run(message) {
 		const promises = [];
 		const ids = [];
+		const names = [];
 		message.guild.members.forEach(elem => {
 			const promise = Match.find({"participants.id": elem.id});
 			promises.push(promise);
-			ids.push(elem.displayName);
+			ids.push(elem.id);
+			names.push(elem.displayName);
 		});
 		const botLogChannel = client.channels.get(config.botLogID) as TextChannel;
 		const logToBotSpam = msg => botLogChannel.send(msg);
@@ -71,7 +73,7 @@ export class RolesCommand extends Commando.Command {
 			.then(users => {
 				users.forEach((elem, idx) => {
 					if (elem && elem.length > 0) {
-						console.log(`User: ${ids[idx]} - ${elem.length} Matches`);
+						console.log(`User: ${names[idx]} - ${elem.length} Matches`);
 						let roleToGive = '';
 						if (elem.length >= 10) {
 							roleToGive = tenID;
