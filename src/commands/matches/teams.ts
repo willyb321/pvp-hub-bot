@@ -146,7 +146,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 			collectors.push(reroll);
 			reroll.on('end', (elems, reason) => {
 				console.log(`Approve collector ended with reason: ${reason}`);
-				unregFromOtherQueues();
+				unregFromOtherQueues(msg.channel);
 				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - currentStatus.queueTeamTimes.get(msg.channel.id));
 				const participants: IParticipants[] = [];
@@ -226,9 +226,12 @@ export class TeamsCommand extends Commando.Command {
 	}
 }
 
-function unregFromOtherQueues() {
-	const ids = [];
+function unregFromOtherQueues(channel) {
+	let ids = [];
 	currentStatus.currentUsers.forEach(val => val.forEach(user => ids.push(user.id)));
+	ids = ids.filter(elem => {
+		return currentStatus.currentUsers.get(channel.id).includes(elem);
+	});
 	currentStatus.currentUsers.forEach((val, key) => {
 		ids.forEach(id => {
 			if (currentStatus.currentUsers.get(key).findIndex(elem => elem.id === id) > -1) {
