@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, genEmbed} from '../../utils';
+import {config, figureOutTeams, genEmbed} from '../../utils';
 import * as Raven from 'raven';
 import {Match} from '../../db';
 import * as Commando from 'discord.js-commando';
@@ -58,6 +58,9 @@ export class ResultCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
+		if (!isNaN(figureOutTeams(message))) {
+			return true;
+		}
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return false;
 		}

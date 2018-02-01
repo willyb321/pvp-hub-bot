@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {currentStatus, config} from '../../utils';
+import {currentStatus, config, figureOutTeams} from '../../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
@@ -47,6 +47,9 @@ export class RemoveCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
+		if (!isNaN(figureOutTeams(message))) {
+			return true;
+		}
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return false;
 		}

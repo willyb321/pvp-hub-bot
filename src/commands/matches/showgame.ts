@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, genEmbed} from '../../utils';
+import {config, figureOutTeams, genEmbed} from '../../utils';
 import * as Raven from 'raven';
 import {IMatchDoc, Match} from '../../db';
 import * as Commando from 'discord.js-commando';
@@ -49,6 +49,9 @@ export class ShowGameCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
+		if (!isNaN(figureOutTeams(message))) {
+			return true;
+		}
 		return config.allowedChannels.includes(message.channel.id);
 	}
 

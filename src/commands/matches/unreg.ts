@@ -3,7 +3,7 @@
  */
 
 /** ignore */
-import {config, currentStatus} from '../../utils';
+import {config, currentStatus, figureOutTeams} from '../../utils';
 import * as _ from 'lodash';
 import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
@@ -39,6 +39,9 @@ export class UnregCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
+		if (!isNaN(figureOutTeams(message))) {
+			return true;
+		}
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return false;
 		}

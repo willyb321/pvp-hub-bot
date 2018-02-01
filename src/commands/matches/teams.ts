@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, currentStatus, genEmbed} from '../../utils';
+import {config, currentStatus, figureOutTeams, genEmbed, genThreshold} from '../../utils';
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
@@ -34,12 +34,22 @@ Raven.config(config.ravenDSN, {
 //TODO: Fix filter.
 const filterApprove = (reaction, user) => reaction.emoji.name === '✅' && currentStatus.currentUsers.get(reaction.message.channel.id).findIndex(elem => elem.id === user.id) > -1;
 const filterReroll = (reaction, user) => reaction.emoji.name === '🔄' && currentStatus.currentUsers.get(reaction.message.channel.id).findIndex(elem => elem.id === user.id) > -1;
+
+function rolled(message: Commando.CommandoMessage, threshold: number) {
+		return message.channel.send({embed: currentStatus.teamMessage.get(message.channel.id)})
+			.then((msg: Discord.Message) => {
+				teamsReactionApprove(msg, threshold)
+					.then(() => teamsReactionReroll(msg, threshold));
+			})
+			.catch(err => {
+				console.error(err);
+				Raven.captureException(err);
+			});
+}
+
 export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
-	if (!message.channel) {
-		return;
-	}
-	if (!config.allowedChannels.includes(message.channel.id)) {
-		return;
+	if (!message.channel || !message.channel.id) {
+		return false;
 	}
 	if (!currentStatus.currentUsers.has(message.channel.id)) {
 		currentStatus.currentUsers.set(message.channel.id, []);
@@ -53,17 +63,7 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 	if (currentStatus.locked.get(message.channel.id) === true) {
 		return message.replyEmbed({embed: currentStatus.teamMessage.get(message.channel.id)});
 	}
-	let teamsNumber: number;
-	try {
-		if (message.channel.type !== 'text') {
-			return;
-		}
-		const channel = message.channel;
-		teamsNumber = parseInt(channel.name.split('v')[0]);
-	} catch (err) {
-		console.log(err);
-		Raven.captureException(err);
-	}
+	const teamsNumber = figureOutTeams(message);
 	if (currentStatus.currentUsers.get(message.channel.id).length < teamsNumber * 2) {
 		return message.reply('Get some more people!');
 	}
@@ -79,21 +79,10 @@ export function teams(message: Commando.CommandoMessage, reroll?: boolean) {
 	if (currentStatus.teams.get(message.channel.id).length === 2 && currentStatus.teams.get(message.channel.id).length !== curTeamLength) {
 		reroll = true;
 	}
-	const threshold = Math.floor((75 / 100) * (teamsNumber * 2));
+	const threshold = genThreshold(teamsNumber);
 	console.log('Threshold: ' + threshold);
 	if (currentStatus.teams.get(message.channel.id).length === 2 && !reroll) {
-		return message.channel.send({embed: currentStatus.teamMessage.get(message.channel.id)})
-			.then((msg: Discord.Message) => {
-				teamsReactionApprove(msg, threshold)
-				.then(() => teamsReactionReroll(msg, threshold));
-			})
-			.catch(err => {
-				console.error(err);
-				Raven.captureException(err);
-			});
-	}
-	if (!teamsNumber) {
-		teamsNumber = 2;
+		return rolled(message, threshold);
 	}
 
 	currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
@@ -214,6 +203,12 @@ export class TeamsCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
+		if (!message.channel || !message.channel.id) {
+			return false;
+		}
+		if (!isNaN(figureOutTeams(message))) {
+			return true;
+		}
 		if (!config.allowedChannels.includes(message.channel.id)) {
 			return false;
 		}

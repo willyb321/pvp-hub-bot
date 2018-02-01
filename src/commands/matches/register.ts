@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {currentStatus, config} from '../../utils';
+import {currentStatus, config, figureOutTeams} from '../../utils';
 import * as Raven from 'raven';
 import {teams} from './teams';
 import * as Commando from 'discord.js-commando';
@@ -40,6 +40,9 @@ export class RegisterCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
+		if (!isNaN(figureOutTeams(message))) {
+			return true;
+		}
 		return config.allowedChannels.includes(message.channel.id)
 	}
 	async run(message) {
@@ -51,18 +54,7 @@ export class RegisterCommand extends Commando.Command {
 		}
 		let teamsNumber = currentStatus.teamsNumber.get(message.channel.id);
 		if (!teamsNumber) {
-			const channel = message.channel;
-			try {
-				teamsNumber = parseInt(channel.name.split('v')[0]);
-			} catch (err) {
-				console.error(err);
-				Raven.captureException(err);
-			}
-
-			if (!teamsNumber) {
-				teamsNumber = 2;
-			}
-
+			const teamsNumber = figureOutTeams(message);
 			currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
 		}
 		if (!currentStatus.teams.has(message.channel.id)) {

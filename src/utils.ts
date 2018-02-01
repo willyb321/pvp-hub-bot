@@ -5,6 +5,7 @@
  * ignore
  */
 import * as Discord from 'discord.js';
+import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
 
@@ -71,3 +72,24 @@ export const genEmbed = (title, desc) => new Discord.RichEmbed()
 		.setDescription(desc)
 		.setFooter('By Willyb321', 'https://willb.info/i/2167372b54bbaf90900a8205a28f3733')
 		.setTimestamp();
+
+export const genThreshold = teamsNumber => Math.floor((75 / 100) * (teamsNumber * 2));
+
+export function figureOutTeams(message: Commando.CommandoMessage): number {
+	let teamsNumber: number;
+	try {
+		if (message.channel.type !== 'text') {
+			return;
+		}
+		const channel = message.channel;
+		teamsNumber = parseInt(channel.name.split('v')[0]);
+		if (isNaN(teamsNumber)) {
+			return NaN;
+		}
+		console.log(teamsNumber)
+	} catch (err) {
+		console.log(err);
+		Raven.captureException(err);
+	}
+	return teamsNumber;
+}
