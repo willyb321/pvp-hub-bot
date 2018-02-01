@@ -41,7 +41,7 @@ process.on('unhandledRejection', (err: Error) => {
 
 // Create an instance of a Discord client
 export const client = new Commando.Client({
-	owner: [config.ownerID, '178624107489787904'],
+	owner: config.ownerID,
 	commandPrefix: '?',
 	unknownCommandResponse: false
 });
