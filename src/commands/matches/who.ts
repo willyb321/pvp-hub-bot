@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, currentStatus, genEmbed} from '../../utils';
+import {config, currentStatus, figureOutTeams, genEmbed} from '../../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
@@ -39,6 +39,12 @@ export class WhoCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
+		if (!msg || !msg.channel || !msg.channel.id) {
+			return false;
+		}
+		if (!isNaN(figureOutTeams(msg))) {
+			return true;
+		}
 		return config.allowedChannels.includes(msg.channel.id);
 	}
 
