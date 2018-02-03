@@ -86,7 +86,6 @@ export function figureOutTeams(message: Commando.CommandoMessage): number {
 		if (isNaN(teamsNumber)) {
 			return NaN;
 		}
-		console.log(teamsNumber)
 	} catch (err) {
 		console.log(err);
 		Raven.captureException(err);

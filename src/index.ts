@@ -8,10 +8,11 @@
 import 'source-map-support/register';
 import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
-import {config, currentStatus} from './utils';
+import {config, currentStatus, figureOutTeams} from './utils';
 import {basename, join} from 'path';
 import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
+import {TextChannel} from "discord.js";
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -96,14 +97,46 @@ client.on('ready', () => {
 	console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 	client.user.setGame('the pew pews')
 		.then(() => {
-			config.allowedChannels.forEach(elem => {
-				currentStatus.currentUsers.set(elem, []);
-			});
+			// config.allowedChannels.forEach(elem => {
+			// 	currentStatus.currentUsers.set(elem, []);
+			// });
 		})
 		.catch(err => {
 			Raven.captureException(err);
 		});
+	setTimeout(setUpLobbies, 1000);
 });
+
+async function setUpLobbies() {
+	const guild = client.guilds.get(config.allowedServers[0]);
+	if (!guild || !guild.available) {
+		return;
+	}
+	const channels = guild.channels;
+	if (channels) {
+		channels.array().forEach(async chan => {
+			let channel = chan as TextChannel;
+			if (channel.type !== 'text') {
+				return;
+			}
+			let msg;
+			try {
+				msg = await channel.fetchMessage(channel.lastMessageID);
+			} catch (err) {
+				if (err.code !== 50001) {
+					console.error(err);
+					Raven.captureException(err);
+				}
+			}
+			if (!msg) {
+				return;
+			}
+			if (!isNaN(figureOutTeams(msg))) {
+				currentStatus.currentUsers.set(channel.id, []);
+			}
+		})
+	}
+}
 
 client.registry
 	.registerGroup('matches', 'Matches')
