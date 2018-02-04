@@ -1,7 +1,7 @@
 import {config, currentStatus, genEmbed} from './utils';
 import {client} from './index';
 import * as Raven from 'raven';
-import {TextChannel} from 'discord.js';
+import {TextChannel, Message} from 'discord.js';
 
 export async function updateQueues() {
 	const queueChannel = client.channels.get(config.queueChannelID) as TextChannel;
