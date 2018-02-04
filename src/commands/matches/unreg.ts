@@ -8,6 +8,7 @@ import * as _ from 'lodash';
 import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
 import {basename} from 'path';
+import {updateQueues} from '../../queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -72,6 +73,14 @@ export class UnregCommand extends Commando.Command {
 				clearTimeout(currentStatus.timeouts.get(message.channel.id));
 				currentStatus.timeouts.delete(message.channel.id);
 			}
+			updateQueues()
+				.then(() => {
+
+				})
+				.catch(err => {
+					console.error(err);
+					Raven.captureException(err);
+				});
 			return;
 		}
 	}

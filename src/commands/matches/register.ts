@@ -10,6 +10,7 @@ import {teams} from './teams';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import {resetCounters} from './reset';
+import {updateQueues} from '../../queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -65,6 +66,14 @@ export class RegisterCommand extends Commando.Command {
 			return message.reply('Full!');
 		} else if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
 			currentStatus.currentUsers.get(message.channel.id).push(message.author);
+			updateQueues()
+				.then(() => {
+
+				})
+				.catch(err => {
+					console.error(err);
+					Raven.captureException(err);
+				});
 			message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers.get(message.channel.id).length} / ${currentStatus.teamsNumber.get(message.channel.id) * 2}`);
 			if (currentStatus.timeouts.has(message.channel.id)) {
 				clearTimeout(currentStatus.timeouts.get(message.channel.id));

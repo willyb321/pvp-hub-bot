@@ -13,6 +13,7 @@ import {basename, join} from 'path';
 import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
 import {TextChannel} from "discord.js";
+import {updateQueues} from './queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -134,7 +135,15 @@ async function setUpLobbies() {
 			if (!isNaN(figureOutTeams(msg))) {
 				currentStatus.currentUsers.set(channel.id, []);
 			}
-		})
+		});
+		updateQueues()
+			.then(() => {
+
+			})
+			.catch(err => {
+				console.error(err);
+				Raven.captureException(err);
+			});
 	}
 }
 

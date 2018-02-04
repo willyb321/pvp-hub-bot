@@ -29,6 +29,13 @@ Raven.config(config.ravenDSN, {
 	}
 }).install();
 
+export const genEmbed = (title, desc) => new Discord.RichEmbed()
+	.setTitle(title)
+	.setAuthor('PvP Hub Bot', 'https://willb.info/i/822a4be1252dd25c0632e584f0d016c3')
+	.setDescription(desc)
+	.setFooter('By Willyb321', 'https://willb.info/i/2167372b54bbaf90900a8205a28f3733')
+	.setTimestamp();
+
 export interface ICurrentStatus {
 	currentUsers: Map<string, Discord.User[]>;
 	teams: Map<string, Discord.User[][]>;
@@ -40,6 +47,7 @@ export interface ICurrentStatus {
 	queueTeamTimes: Map<string, number>;
 	timeouts: Map<string, any>;
 	rerollCount: Map<string, number>;
+	queueEmbed: Discord.RichEmbed;
 }
 
 export const currentStatus: ICurrentStatus = {
@@ -52,7 +60,8 @@ export const currentStatus: ICurrentStatus = {
 	queueStartTimes: new Map(),
 	queueTeamTimes: new Map(),
 	timeouts: new Map(),
-	rerollCount: new Map()
+	rerollCount: new Map(),
+	queueEmbed: genEmbed('Current Queues', 'Updated when queues change.')
 };
 
 export const chunk = (target, size) => {
@@ -66,12 +75,7 @@ export const chunk = (target, size) => {
 	}, [[]]);
 };
 
-export const genEmbed = (title, desc) => new Discord.RichEmbed()
-		.setTitle(title)
-		.setAuthor('PvP Hub Bot', 'https://willb.info/i/822a4be1252dd25c0632e584f0d016c3')
-		.setDescription(desc)
-		.setFooter('By Willyb321', 'https://willb.info/i/2167372b54bbaf90900a8205a28f3733')
-		.setTimestamp();
+
 
 export const genThreshold = teamsNumber => Math.floor((75 / 100) * (teamsNumber * 2));
 
