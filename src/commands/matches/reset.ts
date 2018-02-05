@@ -9,6 +9,7 @@ import {collectors} from './teams';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
+import {updateQueues} from '../../queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -99,5 +100,10 @@ export function resetCounters(message: Commando.CommandoMessage) {
 	currentStatus.queueTeamTimes.delete(message.channel.id);
 	collectors.forEach(elem => elem.cleanup());
 	collectors.slice(0, collectors.length);
+	updateQueues()
+		.catch(err => {
+			console.error(err);
+			Raven.captureException(err);
+		});
 	return message.channel.send('New session created.');
 }
