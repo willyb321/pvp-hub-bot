@@ -82,7 +82,7 @@ export const genThreshold = teamsNumber => Math.floor((75 / 100) * (teamsNumber 
 
 export function figureOutTeams(channel: TextChannel | Commando.CommandoMessage): number {
 	let teamsNumber: number;
-	if (channel instanceof Commando.CommandoMessage) {
+	if ((<Commando.CommandoMessage>channel).channel) {
 		channel = channel.channel;
 	}
 	try {
