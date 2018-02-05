@@ -11,7 +11,7 @@ import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import {client} from "../../index";
 
-const PastebinAPI = require('pastebin-js')
+const PastebinAPI = require('pastebin-js');
 const pastebin = new PastebinAPI(config.pastebinKey);
 
 Raven.config(config.ravenDSN, {

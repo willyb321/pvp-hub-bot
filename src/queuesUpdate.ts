@@ -1,4 +1,4 @@
-import {config, currentStatus, genEmbed} from './utils';
+import {config, currentStatus, figureOutTeams, genEmbed} from './utils';
 import {client} from './index';
 import * as Raven from 'raven';
 import {TextChannel, Message} from 'discord.js';
@@ -23,13 +23,8 @@ export async function updateQueues() {
 	let counts: any = [];
 	for (const [key, val] of currentStatus.currentUsers) {
 		let teamsNumber: number;
-		try {
-			const channel = client.guilds.get(config.allowedServers[0]).channels.get(key);
-			teamsNumber = parseInt(channel.name.split('v')[0]);
-		} catch (err) {
-			console.log(err);
-			Raven.captureException(err);
-		}
+		const channel = client.channels.get(key) as TextChannel;
+		teamsNumber = figureOutTeams(channel);
 		currentStatus.teamsNumber.set(key, teamsNumber);
 		counts.push({channel: key, count: val.length});
 	}
@@ -40,7 +35,7 @@ export async function updateQueues() {
 	});
 	currentStatus.queueEmbed = genEmbed('Current Queues:', embedString);
 	if (send) {
-		return queueChannel.send({embed: currentStatus.queueEmbed});
+		return queueChannel.send('Queues: ', {embed: currentStatus.queueEmbed});
 	} else {
 		msg.edit('Queues: ', {embed: currentStatus.queueEmbed})
 			.catch(err => {

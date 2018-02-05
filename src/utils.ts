@@ -10,6 +10,7 @@ import {basename} from 'path';
 import * as Raven from 'raven';
 
 import {config} from './config';
+import {TextChannel} from 'discord.js';
 export {config} from './config';
 
 Raven.config(config.ravenDSN, {
@@ -79,13 +80,15 @@ export const chunk = (target, size) => {
 
 export const genThreshold = teamsNumber => Math.floor((75 / 100) * (teamsNumber * 2));
 
-export function figureOutTeams(message: Commando.CommandoMessage): number {
+export function figureOutTeams(channel: TextChannel | Commando.CommandoMessage): number {
 	let teamsNumber: number;
+	if (channel instanceof Commando.CommandoMessage) {
+		channel = channel.channel;
+	}
 	try {
-		if (message.channel.type !== 'text') {
+		if (channel.type !== 'text') {
 			return;
 		}
-		const channel = message.channel;
 		teamsNumber = parseInt(channel.name.split('v')[0]);
 		if (isNaN(teamsNumber)) {
 			return NaN;
