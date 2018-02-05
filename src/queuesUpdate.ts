@@ -28,11 +28,11 @@ export async function updateQueues() {
 		currentStatus.teamsNumber.set(key, teamsNumber);
 		counts.push({channel: key, count: val.length});
 	}
-	counts = counts.sort((a, b) => client.guilds.get(config.allowedServers[0]).channels.get(a.channel).name > client.guilds.get(config.allowedServers[0]).channels.get(b.channel).name === true);
+	counts = counts.sort((a, b) => client.guilds.get(config.allowedServers[0]).channels.get(a.channel).name.localeCompare(client.guilds.get(config.allowedServers[0]).channels.get(b.channel).name));
 	let embedString = '';
-	counts.forEach(elem => {
+	for (const elem of counts) {
 		embedString += `<#${elem.channel}> - ${elem.count} / ${currentStatus.teamsNumber.get(elem.channel) * 2}\n`;
-	});
+	}
 	currentStatus.queueEmbed = genEmbed('Current Queues:', embedString);
 	if (send) {
 		return queueChannel.send('Queues: ', {embed: currentStatus.queueEmbed});
