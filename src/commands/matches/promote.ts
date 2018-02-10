@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, currentStatus} from '../../utils';
+import {config, currentStatus, figureOutTeams} from '../../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
@@ -40,6 +40,9 @@ export class PromoteCommand extends Commando.Command {
 		});
 	}
 	hasPermission(msg) {
+		if (!isNaN(figureOutTeams(msg)) && figureOutTeams(msg) > 1) {
+			return true;
+		}
 		if (!currentStatus.currentUsers.has(msg.channel.id)) {
 			return false
 		}
