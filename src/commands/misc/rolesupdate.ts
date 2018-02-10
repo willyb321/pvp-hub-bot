@@ -43,7 +43,15 @@ export class RolesCommand extends Commando.Command {
 			memberName: 'roles',
 			description: 'Tags people based on number of matches done.',
 			details: 'Tags people based on number of matches done.',
-			examples: ['roles']
+			examples: ['roles'],
+			arguments: [
+				{
+					key: 'dry',
+					prompt: 'Run, but don\'t modify. Default true.',
+					type: 'boolean',
+					default: true
+				}
+			]
 		});
 	}
 
@@ -57,7 +65,7 @@ export class RolesCommand extends Commando.Command {
 		return !!client.isOwner(msg.author);
 	}
 
-	async run(message) {
+	async run(message, args) {
 		const promises = [];
 		const ids = [];
 		const names = [];
@@ -111,7 +119,9 @@ export class RolesCommand extends Commando.Command {
 										botlogmsg += `${elem.name}\n`;
 									});
 									botlogmsg += '```';
-									member.edit({roles: roles});
+									if (!args.dry) {
+										member.edit({roles: roles});
+									}
 									console.log(botlogmsg);
 									logToBotSpam(botlogmsg);
 								}
