@@ -40,8 +40,8 @@ export class PromoteCommand extends Commando.Command {
 		});
 	}
 	hasPermission(msg) {
-		if (!isNaN(figureOutTeams(msg)) && figureOutTeams(msg) > 1) {
-			return true;
+		if (!isNaN(figureOutTeams(msg)) && figureOutTeams(msg) === 1) {
+			return false;
 		}
 		if (!currentStatus.currentUsers.has(msg.channel.id)) {
 			return false
