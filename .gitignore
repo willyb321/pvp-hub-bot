@@ -133,9 +133,7 @@ pilots.db
 ratings.db
 sessions.db
 ecosystem.config.js
-config\.json
 
 docs/
-src/config.ts
-
+config.*.json
 \.idea/
