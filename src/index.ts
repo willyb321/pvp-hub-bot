@@ -122,7 +122,9 @@ async function setUpLobbies() {
 			}
 			let msg;
 			try {
-				msg = await channel.fetchMessage(channel.lastMessageID);
+				if (channel && channel.lastMessageID) {
+					msg = await channel.fetchMessage(channel.lastMessageID);
+				}
 			} catch (err) {
 				if (err.code !== 50001) {
 					console.error(err);
