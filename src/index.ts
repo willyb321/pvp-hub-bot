@@ -129,7 +129,7 @@ async function setUpLobbies() {
 					Raven.captureException(err);
 				}
 			}
-			if (!msg) {
+			if (!msg || !channel) {
 				return;
 			}
 			if (!isNaN(figureOutTeams(msg))) {

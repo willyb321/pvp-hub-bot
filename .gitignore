@@ -133,6 +133,7 @@ pilots.db
 ratings.db
 sessions.db
 ecosystem.config.js
+ecosystem.arctic.config.js
 
 docs/
 config.*.json
