@@ -31,7 +31,7 @@ export class PromoteCommand extends Commando.Command {
 		super(client, {
 			name: 'promote',
 			aliases: ['p'],
-			throttling: {usages: 1, duration: 60},
+			throttling: {usages: 1, duration: 600},
 			group: 'misc',
 			memberName: 'promote',
 			description: 'Promote a match.',

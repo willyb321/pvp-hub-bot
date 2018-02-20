@@ -13,11 +13,6 @@ import {basename} from 'path';
 import {Role} from "discord.js";
 import * as _ from "lodash";
 
-const tenID = '407634274217492480';
-const twofiveID = '407634353795891203';
-const fiftyID = '407634390248587284';
-const hundredplusID = '407634430195138561';
-
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
 	dataCallback (data) { // source maps
