@@ -39,22 +39,26 @@ export class FlipCommand extends Commando.Command {
 			memberName: 'flip',
 			description: 'Flip a theoretical coin.',
 			details: 'Flip a theoretical coin.',
-			examples: ['flip']
+			examples: ['flip'],
+			guildOnly: true
 		});
 	}
 
 	hasPermission(msg) {
-		if (!msg.member || !msg.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+		if (!msg.member) {
 			return false;
-		} else {
+		}
+		if (msg.member.roles.find(elem => config.flipRoles.includes(elem.id))) {
 			return true;
+		} else {
+			return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 		}
 	}
 
-	async run(msg, args) {
+	async run(msg) {
 		const flipped = flip();
-		console.log(`Coin flipped by ${msg.author.toString()}: ${flipped}`);
-		const embed = genEmbed('Coin Flipped', flipped);
+		console.log(`Coin flipped by ${msg.author.tag}: ${flipped}`);
+		const embed = genEmbed('Coin Flipped', `Result: ${flipped}`);
 		embed.addField('By:', msg.author.toString());
 		return msg.channel.send({embed});
 	}
