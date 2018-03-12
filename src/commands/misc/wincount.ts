@@ -5,10 +5,13 @@
  * ignore
  */
 import {config, genEmbed} from '../../utils';
+import {client} from '../../index';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
-import {Match} from '../../db';
+import {IMatch, IMatchDoc, IParticipants, Match} from '../../db';
 import {basename} from 'path';
+import {Role} from "discord.js";
+import * as _ from "lodash";
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -35,7 +38,7 @@ export class WinCountCommand extends Commando.Command {
 			memberName: 'wincount',
 			description: 'Shows how many matches you have win.',
 			details: 'Shows how many matches you have win.',
-			examples: ['wincount']
+			examples: ['gamecount']
 		});
 	}
 
