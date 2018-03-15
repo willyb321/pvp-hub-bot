@@ -86,7 +86,7 @@ client
 	});
 
 client.setProvider(
-	sqlite.open(join(__dirname, 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
+	sqlite.open(join(__dirname, '..', 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
 ).catch(err => {
 	console.error(err);
 	Raven.captureException(err);
