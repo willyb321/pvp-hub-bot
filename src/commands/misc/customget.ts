@@ -1,6 +1,6 @@
 import * as Commando from 'discord.js-commando';
 
-module.exports = class CustomGetCommand extends Commando.Command {
+export class CustomGetCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {
 			name: 'custom',

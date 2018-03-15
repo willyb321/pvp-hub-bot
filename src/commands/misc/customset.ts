@@ -2,7 +2,7 @@ import * as Commando from 'discord.js-commando';
 
 const botAccessID = '406812683736842281';
 
-module.exports = class CustomSetCommand extends Commando.Command {
+export class CustomSetCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {
 			name: 'setcustom',
