@@ -6,7 +6,7 @@ export class CustomDelCommand extends Commando.Command {
 		super(client, {
 			name: 'delcustom',
 			aliases: ['cd'],
-			group: 'questions',
+			group: 'misc',
 			memberName: 'delcustom',
 			description: 'Delete custom commands.',
 			examples: ['delcustom <name>'],

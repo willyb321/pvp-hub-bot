@@ -7,7 +7,7 @@ module.exports = class CustomSetCommand extends Commando.Command {
 		super(client, {
 			name: 'setcustom',
 			aliases: ['sc'],
-			group: 'questions',
+			group: 'misc',
 			memberName: 'setcustom',
 			description: 'Custom commands.',
 			examples: ['custom add<enter>'],

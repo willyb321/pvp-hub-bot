@@ -5,7 +5,7 @@ module.exports = class CustomGetCommand extends Commando.Command {
 		super(client, {
 			name: 'custom',
 			aliases: ['c'],
-			group: 'questions',
+			group: 'misc',
 			memberName: 'custom',
 			description: 'Custom commands.',
 			examples: ['custom [name]', 'c [name]'],
