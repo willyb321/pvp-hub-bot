@@ -1,5 +1,5 @@
 import * as Commando from 'discord.js-commando';
-const botAccessID = '417830772838367233';
+const botAccessID = '406812683736842281';
 
 export class CustomDelCommand extends Commando.Command {
 	constructor(client) {

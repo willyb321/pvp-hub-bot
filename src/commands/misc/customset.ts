@@ -1,6 +1,6 @@
 import * as Commando from 'discord.js-commando';
 
-const botAccessID = '417830772838367233';
+const botAccessID = '406812683736842281';
 
 module.exports = class CustomSetCommand extends Commando.Command {
 	constructor(client) {
