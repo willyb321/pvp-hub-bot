@@ -58,7 +58,7 @@ export class ResultCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
-		if (!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			return false;
 		}
 		if (!isNaN(figureOutTeams(message))) {
