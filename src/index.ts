@@ -108,6 +108,22 @@ client.on('ready', () => {
 	setTimeout(setUpLobbies, 1000);
 });
 
+client.on('guildMemberAdd', (member) => {
+	const channel = member.guild.channels.get('384181369087197184');
+	if (!channel) {
+		return;
+	}
+	channel.send(`<@${member.id}> joined the server`);
+});
+
+client.on('guildMemberRemove', (member) => {
+	const channel = member.guild.channels.get('384181369087197184');
+	if (!channel) {
+		return;
+	}
+	channel.send(`${member.displayName} left the server`);
+});
+
 async function setUpLobbies() {
 	const guild = client.guilds.get(config.allowedServers[0]);
 	if (!guild || !guild.available) {
