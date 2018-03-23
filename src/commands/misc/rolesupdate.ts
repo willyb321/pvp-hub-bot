@@ -17,6 +17,7 @@ const tenID = '407634274217492480';
 const twofiveID = '407634353795891203';
 const fiftyID = '407634390248587284';
 const hundredplusID = '407634430195138561';
+const twohundredplusID = '426611540041531397';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -94,6 +95,9 @@ export class RolesCommand extends Commando.Command {
 						}
 						if (elem.length >= 100) {
 							roleToGive = hundredplusID;
+						}
+						if (elem.length >= 200) {
+							roleToGive = twohundredplusID;
 						}
 						const member = message.guild.members.find('id', ids[idx]);
 						if (member) {
