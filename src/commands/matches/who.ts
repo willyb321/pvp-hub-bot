@@ -30,6 +30,7 @@ export class WhoCommand extends Commando.Command {
 	constructor(client) {
 		super(client, {
 			name: 'who',
+			aliases: ['whomst'],
 			group: 'matches',
 			memberName: 'who',
 			description: 'Gets queue for current channel.',

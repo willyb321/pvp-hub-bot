@@ -21,4 +21,7 @@ export interface IConfig {
 	ownerID: string[];
 	pastebinKey: string;
 	botLogID: string;
+	redditClientId: string;
+	redditClientSecret: string;
+	redditRefreshToken: string;
 }

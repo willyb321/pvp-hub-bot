@@ -109,7 +109,7 @@ client.on('ready', () => {
 });
 
 client.on('guildMemberAdd', (member) => {
-	const channel = member.guild.channels.get('384181369087197184');
+	const channel = member.guild.channels.get(config.botLogID);
 	if (!channel) {
 		return;
 	}
@@ -117,7 +117,7 @@ client.on('guildMemberAdd', (member) => {
 });
 
 client.on('guildMemberRemove', (member) => {
-	const channel = member.guild.channels.get('384181369087197184');
+	const channel = member.guild.channels.get(config.botLogID);
 	if (!channel) {
 		return;
 	}
