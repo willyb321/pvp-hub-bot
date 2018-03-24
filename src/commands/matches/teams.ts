@@ -13,6 +13,8 @@ import {resetCounters} from './reset';
 import {genMatchModel, IMatch, IMatchDoc, IParticipants} from '../../db';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
+import {TextChannel} from "discord.js";
+import {client} from "../../index";
 
 export const collectors: Discord.ReactionCollector[] = [];
 Raven.config(config.ravenDSN, {
@@ -170,6 +172,12 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 					msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers.get(msg.channel.id).join(' ')}`);
 					msg.channel.send({embed: currentStatus.teamMessage.get(msg.channel.id)});
 					currentStatus.queueTeamTimes.delete(msg.channel.id);
+					if (savedDoc.matchNum % 100 === 0 || savedDoc.matchNum % 50 === 0) {
+						const botLogChannel = client.channels.get(config.botLogID) as TextChannel;
+						const logToBotSpam = msg => botLogChannel.send(msg);
+						const announce = `Match ${savedDoc.matchNum} reached on ${new Date().toISOString()}`;
+						logToBotSpam(announce);
+					}
 				})
 				.catch(err => {
 					console.log(err);
