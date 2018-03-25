@@ -56,6 +56,13 @@ export class GameCountCommand extends Commando.Command {
 							const embed = genEmbed(`${member.displayName} # of matches`, `${elem.length} matches`);
 							message.channel.send({embed});
 						}
+					} else {
+						console.log(`User: ${message.author.id} - 0 Matches`);
+						const member = message.member;
+						if (member) {
+							const embed = genEmbed(`${member.displayName} # of matches`, `0 matches`);
+							message.channel.send({embed});
+						}
 					}
 				});
 	}
