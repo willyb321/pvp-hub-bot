@@ -45,7 +45,7 @@ export class PurgeCommand extends Commando.Command {
 		if (limit > 25) {
 			limit = 25;
 		}
-		message.channel.messages.fetch({limit: limit + 1})
+		message.channel.fetchMessages({limit: limit + 1})
 			.then(messages => message.channel.bulkDelete(messages))
 			.catch(err => {
 				Raven.captureException(err);
