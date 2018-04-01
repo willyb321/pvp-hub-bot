@@ -101,34 +101,18 @@ export class RolesCommand extends Commando.Command {
 						}
 						const member = message.guild.members.find('id', ids[idx]);
 						if (member) {
-							const role = message.guild.roles.find('id', roleToGive);
+							const role = message.guild.roles.get(roleToGive);
 							if (role) {
-								let beforeRoleNames = [];
-								let afterRoleNames = [];
-								let botlogmsg = `${member.displayName} roles before modification:\n\`\`\`\n`;
-								member.roles.forEach(elem => {
-									botlogmsg += `${elem.name}\n`;
-									beforeRoleNames.push(elem.id);
-								});
-								botlogmsg += '```';
+								let botlogmsg = `${member.displayName} roles added:\n`;
 								console.log(`Giving ${member.displayName} ${role.name} role`);
-								let roles = [role].concat(member.roles.array());
-								roles = _.uniqBy(roles, 'id');
-								roles.forEach(elem => afterRoleNames.push(elem.id));
-								beforeRoleNames = beforeRoleNames.sort();
-								afterRoleNames = afterRoleNames.sort();
-								if (!_.isEqual(beforeRoleNames, afterRoleNames)) {
-									botlogmsg += `\n\n${member.displayName} roles after modification:\n\`\`\`\n`;
-									roles.forEach(elem => {
-										botlogmsg += `${elem.name}\n`;
-									});
-									botlogmsg += '```';
-									if (!args.dry) {
-										member.edit({roles: roles});
-									}
-									console.log(botlogmsg);
-									logToBotSpam(botlogmsg);
+								botlogmsg += '```';
+								botlogmsg += `${role.name}\n`;
+								botlogmsg += '```';
+								if (!args.dry && !member.roles.get(role)) {
+									member.roles.add(role)
 								}
+								console.log(botlogmsg);
+								logToBotSpam(botlogmsg);
 							}
 						}
 					}
