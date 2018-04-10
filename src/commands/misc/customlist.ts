@@ -26,7 +26,7 @@ export class CustomGetCommand extends Commando.Command {
 		}
 		const truncateString = (str, num) =>
 			str.length > num ? str.slice(0, num > 3 ? num - 3 : num) + '...' : str;
-		msg.client.provider.db.get('SELECT settings FROM settings WHERE guild = ?', msg.guild.id)
+		return msg.client.provider.db.get('SELECT settings FROM settings WHERE guild = ?', msg.guild.id)
 			.then(elem => {
 				try {
 					elem = JSON.parse(elem.settings);

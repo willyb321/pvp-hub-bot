@@ -1,3 +1,4 @@
+///<reference path="../node_modules/sqlite/main.d.ts"/>
 /**
  * @module Index
  */
@@ -10,7 +11,7 @@ import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
 import {config, currentStatus, figureOutTeams} from './utils';
 import {basename, join} from 'path';
-import * as sqlite from 'sqlite';
+import * as sqlite from 'sqlite'
 import {oneLine} from 'common-tags';
 import {TextChannel} from "discord.js";
 import {updateQueues} from './queuesUpdate';
@@ -42,7 +43,7 @@ process.on('unhandledRejection', (err: Error) => {
 });
 
 // Create an instance of a Discord client
-export const client = new Commando.Client({
+export const client = new Commando.CommandoClient({
 	owner: config.ownerID,
 	commandPrefix: '?',
 	unknownCommandResponse: false
@@ -96,7 +97,7 @@ client.setProvider(
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
 	console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
-	client.user.setGame('the pew pews')
+	client.user.setActivity('the pew pews')
 		.then(() => {
 			// config.allowedChannels.forEach(elem => {
 			// 	currentStatus.currentUsers.set(elem, []);
@@ -109,7 +110,7 @@ client.on('ready', () => {
 });
 
 client.on('guildMemberAdd', (member) => {
-	const channel = member.guild.channels.get(config.botLogID);
+	const channel = member.guild.channels.get(config.botLogID) as TextChannel;
 	if (!channel) {
 		return;
 	}
@@ -117,7 +118,7 @@ client.on('guildMemberAdd', (member) => {
 });
 
 client.on('guildMemberRemove', (member) => {
-	const channel = member.guild.channels.get(config.botLogID);
+	const channel = member.guild.channels.get(config.botLogID) as TextChannel;
 	if (!channel) {
 		return;
 	}
@@ -139,7 +140,7 @@ async function setUpLobbies() {
 			let msg;
 			try {
 				if (channel && channel.lastMessageID) {
-					msg = await channel.fetchMessage(channel.lastMessageID);
+					msg = await channel.messages.fetch(channel.lastMessageID);
 				}
 			} catch (err) {
 				if (err.code !== 50001) {
@@ -150,7 +151,7 @@ async function setUpLobbies() {
 			if (!msg || !channel) {
 				return;
 			}
-			if (!isNaN(figureOutTeams(msg))) {
+			if (!isNaN(figureOutTeams(msg.channel))) {
 				currentStatus.currentUsers.set(channel.id, []);
 			}
 		});

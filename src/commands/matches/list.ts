@@ -40,7 +40,7 @@ export class WhoCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
-		if (!isNaN(figureOutTeams(message))) {
+		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
 		return config.allowedChannels.includes(message.channel.id);

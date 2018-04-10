@@ -49,19 +49,16 @@ export class ShowGameCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
-		if (!isNaN(figureOutTeams(message))) {
+		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
 		return config.allowedChannels.includes(message.channel.id);
 	}
 
 	async run(message, args) {
-		if (!config.allowedChannels.includes(message.channel.id)) {
-			return;
-		}
 		const matchNum = args.match;
 		console.time(`Query match #${matchNum}`);
-		Match.findOne({matchNum})
+		return Match.findOne({matchNum})
 			.then((res: IMatchDoc) => {
 				if (res) {
 					console.timeEnd(`Query match #${matchNum}`);
@@ -84,9 +81,9 @@ export class ShowGameCommand extends Commando.Command {
 					}
 					embed.addField('Team 1', `${t1.join('\n')}`);
 					embed.addField('Team 2', `${t2.join('\n')}`);
-					message.channel.send({embed});
+					return message.channel.send({embed});
 				} else {
-					message.channel.send('Game not found.');
+					return message.channel.send('Game not found.');
 				}
 			})
 			.catch(err => {

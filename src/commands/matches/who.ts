@@ -43,7 +43,7 @@ export class WhoCommand extends Commando.Command {
 		if (!msg || !msg.channel || !msg.channel.id) {
 			return false;
 		}
-		if (!isNaN(figureOutTeams(msg))) {
+		if (!isNaN(figureOutTeams(msg.channel))) {
 			return true;
 		}
 		return config.allowedChannels.includes(msg.channel.id);
@@ -58,7 +58,7 @@ export class WhoCommand extends Commando.Command {
 		if (!currentStatus.currentUsers.has(message.channel.id) || currentStatus.currentUsers.get(message.channel.id).length === 0) {
 			return message.channel.send(`Nobody currently registered for ${message.channel.toString()}.`);
 		}
-		return [await message.channel.send({embed})];
+		return message.channel.send({embed});
 	}
 
 }

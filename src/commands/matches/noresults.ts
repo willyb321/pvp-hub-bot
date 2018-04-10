@@ -52,7 +52,7 @@ export class NoResultsCommand extends Commando.Command {
 			return;
 		}
 		console.time('Start query');
-		Match.find({result: 12})
+		return Match.find({result: 12})
 			.then((res: IMatchDoc[]) => {
 				if (res) {
 					console.timeEnd('Start query');
@@ -61,7 +61,7 @@ export class NoResultsCommand extends Commando.Command {
 					for (const i of res) {
 						matches.push(i.matchNum);
 					}
-					pastebin
+					return pastebin
 						.createPaste({
 							text: matches.join('\n'),
 							title: `Matches with no result for ${new Date().toISOString()}`,
@@ -71,7 +71,7 @@ export class NoResultsCommand extends Commando.Command {
 							console.log(data);
 							embed.addField('Full list', data);
 							embed.addField('Results:', matches.slice(-10).join('\n'));
-							message.channel.send({embed});
+							return message.channel.send({embed});
 						})
 						.fail(err => {
 							// Something went wrong
@@ -79,7 +79,7 @@ export class NoResultsCommand extends Commando.Command {
 							Raven.captureException(err);
 						});
 				} else {
-					message.channel.send('No games found.');
+					return message.channel.send('No games found.');
 				}
 			})
 			.catch(err => {

@@ -21,7 +21,7 @@ const twohundredplusID = '426611540041531397';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -44,15 +44,7 @@ export class RolesCommand extends Commando.Command {
 			memberName: 'roles',
 			description: 'Tags people based on number of matches done.',
 			details: 'Tags people based on number of matches done.',
-			examples: ['roles'],
-			arguments: [
-				{
-					key: 'dry',
-					prompt: 'Run, but don\'t modify. Default true.',
-					type: 'boolean',
-					default: true
-				}
-			]
+			examples: ['roles']
 		});
 	}
 
@@ -66,7 +58,7 @@ export class RolesCommand extends Commando.Command {
 		return !!client.isOwner(msg.author);
 	}
 
-	async run(message, args) {
+	async run(message) {
 		const promises = [];
 		const ids = [];
 		const names = [];
@@ -103,37 +95,28 @@ export class RolesCommand extends Commando.Command {
 						if (member) {
 							const role = message.guild.roles.find('id', roleToGive);
 							if (role) {
-								let beforeRoleNames = [];
-								let afterRoleNames = [];
-								let botlogmsg = `${member.displayName} roles before modification:\n\`\`\`\n`;
-								member.roles.forEach(elem => {
-									botlogmsg += `${elem.name}\n`;
-									beforeRoleNames.push(elem.id);
-								});
-								botlogmsg += '```';
+								let rolesUpdateMsg = `Roles updated for ${member.displayName}:\n`;
+
 								console.log(`Giving ${member.displayName} ${role.name} role`);
-								let roles = [role].concat(member.roles.array());
-								roles = _.uniqBy(roles, 'id');
-								roles.forEach(elem => afterRoleNames.push(elem.id));
-								beforeRoleNames = beforeRoleNames.sort();
-								afterRoleNames = afterRoleNames.sort();
-								if (!_.isEqual(beforeRoleNames, afterRoleNames)) {
-									botlogmsg += `\n\n${member.displayName} roles after modification:\n\`\`\`\n`;
-									roles.forEach(elem => {
-										botlogmsg += `${elem.name}\n`;
-									});
-									botlogmsg += '```';
-									if (!args.dry) {
-										member.edit({roles: roles});
-									}
-									console.log(botlogmsg);
-									logToBotSpam(botlogmsg);
+								logToBotSpam(rolesUpdateMsg);
+								if (member.roles.get(role.id)) {
+									return;
 								}
+								member.roles.add(role)
+									.then(() => {
+										rolesUpdateMsg += `Giving ${member.displayName} ${role.name} role\n`;
+										logToBotSpam(rolesUpdateMsg);
+									})
+									.catch(err => {
+										Raven.captureException(err);
+										console.error(err);
+									})
 							}
 						}
 					}
 				});
 			});
+		return message.channel.send('Updating roles. Please stand by.');
 	}
 
 }

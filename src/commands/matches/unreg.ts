@@ -40,7 +40,7 @@ export class UnregCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
-		if (!isNaN(figureOutTeams(message))) {
+		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
 		if (!config.allowedChannels.includes(message.channel.id)) {
@@ -58,7 +58,6 @@ export class UnregCommand extends Commando.Command {
 		if (currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 			_.remove(currentStatus.currentUsers.get(message.channel.id), elem => elem.id === message.author.id);
 			console.log(`Unregistered ${message.member.displayName} from #${message.channel.name}.`);
-			message.channel.send(`Unregistered ${message.member.displayName}.`);
 			if (currentStatus.currentUsers.get(message.channel.id).length === 0) {
 				currentStatus.queueStartTimes.delete(message.channel.id);
 			}
@@ -81,7 +80,7 @@ export class UnregCommand extends Commando.Command {
 					console.error(err);
 					Raven.captureException(err);
 				});
-			return;
+			return message.channel.send(`Unregistered ${message.member.displayName}.`);
 		}
 	}
 }

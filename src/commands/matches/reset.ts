@@ -4,12 +4,13 @@
 /**
  * ignore
  */
-import {currentStatus, config} from '../../utils';
-import {collectors} from './teams';
+import {currentStatus, config, reset} from '../../utils';
+import {collectors} from '../../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
 import {updateQueues} from '../../queuesUpdate';
+import {Message} from "discord.js";
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -57,53 +58,8 @@ export class NewCommand extends Commando.Command {
 
 	}
 	async run(message) {
-		reset(message);
+		return reset(message);
 	}
 
 }
 
-export function reset(message: Commando.CommandoMessage, timeout?: boolean) {
-	if (timeout) {
-		return resetCounters(message);
-	}
-	if (!message.channel) {
-		return
-	}
-	if (message.member && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-		return resetCounters(message);
-	}
-	if (!currentStatus.currentUsers.has(message.channel.id) || !currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
-		return message.reply('You aren\'t in the session');
-	}
-	return resetCounters(message);
-}
-
-export function resetCounters(message: Commando.CommandoMessage) {
-	if (!message.channel) {
-		return;
-	}
-	if (!config.allowedChannels.includes(message.channel.id)) {
-		return;
-	}
-	currentStatus.currentUsers.set(message.channel.id, []);
-	currentStatus.teams.set(message.channel.id, []);
-	if (currentStatus.timeouts.has(message.channel.id)) {
-		clearTimeout(currentStatus.timeouts.get(message.channel.id));
-	}
-	currentStatus.timeouts.delete(message.channel.id);
-	currentStatus.locked.delete(message.channel.id);
-	currentStatus.teamMessage.delete(message.channel.id);
-	currentStatus.teams.delete(message.channel.id);
-	currentStatus.teamsNumber.delete(message.channel.id);
-	currentStatus.queueStartTimes.delete(message.channel.id);
-	currentStatus.queueEndTimes.delete(message.channel.id);
-	currentStatus.queueTeamTimes.delete(message.channel.id);
-	collectors.forEach(elem => elem.cleanup());
-	collectors.slice(0, collectors.length);
-	updateQueues()
-		.catch(err => {
-			console.error(err);
-			Raven.captureException(err);
-		});
-	return message.channel.send('New session created.');
-}

@@ -9,14 +9,14 @@ import * as Raven from 'raven';
 import {Match} from '../../db';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
-import { client } from '../../index';
+import {client} from '../../index';
 
 const PastebinAPI = require('pastebin-js')
 const pastebin = new PastebinAPI(config.pastebinKey);
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -61,7 +61,7 @@ export class ResultCommand extends Commando.Command {
 		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			return false;
 		}
-		if (!isNaN(figureOutTeams(message))) {
+		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
 		if (!config.allowedChannels.includes(message.channel.id)) {
@@ -75,7 +75,7 @@ export class ResultCommand extends Commando.Command {
 		const matchNum = args.matchNum;
 		const winningTeam = args.winning;
 		console.time(`Query match #${matchNum}`);
-		Match.findOneAndUpdate({matchNum}, {result: winningTeam})
+		return Match.findOneAndUpdate({matchNum}, {result: winningTeam})
 			.then(res => {
 				if (res && winningTeam !== 12) {
 					console.timeEnd(`Query match #${matchNum}`);
@@ -95,7 +95,7 @@ export class ResultCommand extends Commando.Command {
 					console.log(res);
 					const embed = genEmbed('Match Result', `Game #${matchNum}`);
 					embed.addField('Winning Team', 'Invalidated');
-					message.channel.send({embed});
+					return message.channel.send({embed});
 				}
 			})
 			.catch(err => {
@@ -105,73 +105,73 @@ export class ResultCommand extends Commando.Command {
 	}
 
 }
-
-export class RemoveMatchCommand extends Commando.Command {
-	constructor(client) {
-		super(client, {
-			name: 'delgame',
-			group: 'matches',
-			memberName: 'delgame',
-			description: '[Mod] Delete match from DB. Doesn\'t affect matchmaking.',
-			details: '[Mod] Delete match from DB. Doesn\'t affect matchmaking.',
-			examples: ['delgame 81 82'],
-			args: [
-				{
-					key: 'matchNum',
-					prompt: 'What game #',
-					type: 'integer',
-					validate: val => parseInt(val) >= 0,
-					infinite: true
-				}
-			]
-		});
-	}
-
-	hasPermission(message) {
-		return client.isOwner(message.author);
-	}
-
-	async run(message, args) {
-		const matchNum = args.matchNum;
-		const winningTeam = args.winning;
-		console.time('Start query');
-		let response = `Deleted:\n`;
-		let promises = [];
-		matchNum.forEach(match => {
-			console.log(match);
-			promises.push(Match.findOneAndRemove({matchNum: match}))
-		});
-		Promise.all(promises)
-		.then(reses => {
-			reses.forEach((elem, ind) => {
-				if (elem) {
-					response += `#${elem.matchNum}\n`;
-				} else {
-					response += `Not found\n`
-				}
-			})
-			pastebin
-				.createPaste({
-					text: response,
-					title: `Matches deleted by ${message.author.tag} for ${new Date().toISOString()}`,
-					expiration: '10M'
-				})
-				.then(data => {
-					const embed = genEmbed(`Matches deleted by ${message.author.tag}`, `On ${new Date().toISOString()}`);
-					console.log(data);
-					embed.addField('Full list', data);
-					message.channel.send({embed});
-				})
-				.fail(err => {
-					// Something went wrong
-					console.log(err);
-					Raven.captureException(err);
-				});
-		}).catch(err => {
-			console.error(err);
-			Raven.captureException(err);
-		})
-
-	}
-
-}
+//
+// export class RemoveMatchCommand extends Commando.Command {
+// 	constructor(client) {
+// 		super(client, {
+// 			name: 'delgame',
+// 			group: 'matches',
+// 			memberName: 'delgame',
+// 			description: '[Mod] Delete match from DB. Doesn\'t affect matchmaking.',
+// 			details: '[Mod] Delete match from DB. Doesn\'t affect matchmaking.',
+// 			examples: ['delgame 81 82'],
+// 			args: [
+// 				{
+// 					key: 'matchNum',
+// 					prompt: 'What game #',
+// 					type: 'integer',
+// 					validate: val => parseInt(val) >= 0,
+// 					infinite: true
+// 				}
+// 			]
+// 		});
+// 	}
+//
+// 	hasPermission(message) {
+// 		return client.isOwner(message.author);
+// 	}
+//
+// 	async run(message, args) {
+// 		const matchNum = args.matchNum;
+// 		const winningTeam = args.winning;
+// 		console.time('Start query');
+// 		let response = `Deleted:\n`;
+// 		let promises = [];
+// 		matchNum.forEach(match => {
+// 			console.log(match);
+// 			promises.push(Match.findOneAndRemove({matchNum: match}))
+// 		});
+// 		return Promise.all(promises)
+// 			.then(reses => {
+// 				reses.forEach((elem, ind) => {
+// 					if (elem) {
+// 						response += `#${elem.matchNum}\n`;
+// 					} else {
+// 						response += `Not found\n`
+// 					}
+// 				});
+// 				return pastebin
+// 					.createPaste({
+// 						text: response,
+// 						title: `Matches deleted by ${message.author.tag} for ${new Date().toISOString()}`,
+// 						expiration: '10M'
+// 					})
+// 					.then(data => {
+// 						const embed = genEmbed(`Matches deleted by ${message.author.tag}`, `On ${new Date().toISOString()}`);
+// 						console.log(data);
+// 						embed.addField('Full list', data);
+// 						return message.channel.send({embed});
+// 					})
+// 					.fail(err => {
+// 						// Something went wrong
+// 						console.log(err);
+// 						Raven.captureException(err);
+// 					});
+// 			}).catch(err => {
+// 				console.error(err);
+// 				Raven.captureException(err);
+// 			})
+//
+// 	}
+//
+// }

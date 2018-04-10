@@ -6,10 +6,10 @@
  */
 import {currentStatus, config, figureOutTeams} from '../../utils';
 import * as Raven from 'raven';
-import {teams} from './teams';
+import {teams} from '../../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
-import {resetCounters} from './reset';
+import {resetCounters} from '../../utils';
 import {updateQueues} from '../../queuesUpdate';
 
 Raven.config(config.ravenDSN, {
@@ -41,7 +41,7 @@ export class RegisterCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		if (!isNaN(figureOutTeams(message))) {
+		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
 		return config.allowedChannels.includes(message.channel.id)
@@ -55,7 +55,7 @@ export class RegisterCommand extends Commando.Command {
 		}
 		let teamsNumber = currentStatus.teamsNumber.get(message.channel.id);
 		if (!teamsNumber) {
-			const teamsNumber = figureOutTeams(message);
+			const teamsNumber = figureOutTeams(message.channel);
 			currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
 		}
 		if (!currentStatus.teams.has(message.channel.id)) {
