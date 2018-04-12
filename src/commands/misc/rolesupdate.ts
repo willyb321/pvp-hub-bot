@@ -98,7 +98,6 @@ export class RolesCommand extends Commando.Command {
 								let rolesUpdateMsg = `Roles updated for ${member.displayName}:\n`;
 
 								console.log(`Giving ${member.displayName} ${role.name} role`);
-								logToBotSpam(rolesUpdateMsg);
 								if (member.roles.get(role.id)) {
 									return;
 								}
