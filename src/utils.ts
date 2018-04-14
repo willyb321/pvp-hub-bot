@@ -103,9 +103,6 @@ export function resetCounters(message: Message) {
 	if (!message.channel) {
 		return;
 	}
-	if (!config.allowedChannels.includes(message.channel.id)) {
-		return;
-	}
 	currentStatus.currentUsers.set(message.channel.id, []);
 	currentStatus.teams.set(message.channel.id, []);
 	if (currentStatus.timeouts.has(message.channel.id)) {
