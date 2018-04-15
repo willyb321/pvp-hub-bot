@@ -39,15 +39,15 @@ export class PremadeCommand extends Commando.Command {
 			memberName: 'premade',
 			description: 'Premake matches.',
 			details: 'Premake matches.',
-			examples: ['premade @willyb321 @bazinga @yamato @spacemage']/*,
+			examples: ['premade 2'],
+			guildOnly: true,
 			args: [
 				{
-					key: 'integer',
-					prompt: 'Team number? 1 or 2.',
-					type: 'integer',
-					validate: val => parseInt(val) === 1 || parseInt(val) === 2
+					key: 'teamsNumber',
+					prompt: 'How many per side? (2 for 2v2)',
+					type: 'integer'
 				}
-			]*/
+			]
 		});
 	}
 
@@ -55,11 +55,11 @@ export class PremadeCommand extends Commando.Command {
 		if (!message.channel || !message.channel.id) {
 			return false;
 		}
-		return !isNaN(figureOutTeams(message.channel));
+		return message.channel.id === config.premadeChannelId
 	}
 
-	async run(message) {
-		const teamsNumber = figureOutTeams(message.channel as Discord.TextChannel);
+	async run(message, args) {
+		const teamsNumber = args.teamsNumber;
 		let text = `Premade for ${message.channel.toString()}:\n`;
 		let t1 = `Team 1:\n`;
 		let t2 = `Team 2:\n`;

@@ -14,6 +14,7 @@ export interface IConfig {
 	allowedServers: string[];
 	allowedUsers: string[];
 	allowedRoles: string[];
+	premadeChannelId: string;
 	flipRoles: string[];
 	ravenDSN: string;
 	token: string;
