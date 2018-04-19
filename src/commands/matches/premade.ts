@@ -155,7 +155,7 @@ export class PremadeCommand extends Commando.Command {
 				doc.save()
 					.then((savedDoc: IMatchDoc) => {
 						console.log(`Match #${savedDoc.matchNum} locked in.`);
-						msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${currentStatus.currentUsers.get(msg.channel.id).join(' ')}`);
+						msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${teamsToUse[0].join(' ')} ${teamsToUse[1].join(' ')}`);
 						currentStatus.queueTeamTimes.delete(msg.channel.id);
 						if (savedDoc.matchNum % 100 === 0 || savedDoc.matchNum % 50 === 0) {
 							const botLogChannel = client.channels.get(config.botLogID) as Discord.TextChannel;
