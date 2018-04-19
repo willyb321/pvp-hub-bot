@@ -50,14 +50,14 @@ export class GameCountCommand extends Commando.Command {
 		return Match.find({'participants.id': message.author.id})
 			.then(elem => {
 					if (elem && elem.length > 0) {
-						console.log(`User: ${message.author.id} - ${elem.length} Matches`);
+						console.log(`User: ${message.author.tag} - ${elem.length} Matches`);
 						const member = message.member;
 						if (member) {
 							const embed = genEmbed(`${member.displayName} # of matches`, `${elem.length} matches`);
 							return message.channel.send({embed});
 						}
 					} else {
-						console.log(`User: ${message.author.id} - 0 Matches`);
+						console.log(`User: ${message.author.tag} - 0 Matches`);
 						const member = message.member;
 						if (member) {
 							const embed = genEmbed(`${member.displayName} # of matches`, `0 matches`);
