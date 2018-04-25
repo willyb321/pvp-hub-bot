@@ -25,9 +25,6 @@ Raven.config(config.ravenDSN, {
 		return data;
 	}
 }).install();
-//TODO: Fix filter.
-
-
 
 export class TeamsCommand extends Commando.Command {
 	constructor(client) {

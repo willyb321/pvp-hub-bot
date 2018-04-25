@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import {genEmbed} from "../../utils";
 import {config} from "../../config";
 import * as Commando from 'discord.js-commando';

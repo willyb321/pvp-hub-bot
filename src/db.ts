@@ -87,7 +87,7 @@ const CounterSchema = new mongoose.Schema({
 const counter = mongoose.model('counter', CounterSchema);
 
 matchSchema.pre('save', function (next) {
-    const doc = this;
+    const doc: any = this;
     counter.findByIdAndUpdate({_id: 'MatchId'}, {$inc: {seq: 1}}, function (error: Error, counter: any)   {
         if (error) {
             return next(error);

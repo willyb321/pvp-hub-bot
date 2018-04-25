@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import * as Commando from 'discord.js-commando';
 
 export class CustomGetCommand extends Commando.Command {

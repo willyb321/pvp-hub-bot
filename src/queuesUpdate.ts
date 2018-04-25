@@ -1,3 +1,9 @@
+/**
+ * @module Utils
+ */
+/**
+ * ignore
+ */
 import {config, currentStatus, figureOutTeams, genEmbed} from './utils';
 import {client} from './index';
 import * as Raven from 'raven';

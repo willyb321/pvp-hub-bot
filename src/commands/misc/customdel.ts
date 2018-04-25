@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import * as Commando from 'discord.js-commando';
 const botAccessID = '406812683736842281';
 
