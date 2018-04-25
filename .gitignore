@@ -138,3 +138,4 @@ ecosystem.arctic.config.js
 docs/
 config.*.json
 \.idea/
+settings.sqlite3
