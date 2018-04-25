@@ -84,6 +84,7 @@ export class PremadeCommand extends Commando.Command {
 			const filterOne = (reaction, user) => reaction.emoji.name === reaction_numbers[1] && user.id !== message.client.user.id;
 			const addone = new Discord.ReactionCollector(msg, filter, {dispose: true});
 			const stop = new Discord.ReactionCollector(msg, filterStop, {maxUsers: teamsNumber});
+			currentStatus.queueStartTimes.set(msg.channel.id, new Date());
 			stop.on('end', async (reactions, reason) => {
 				if (reason === 'cleanup') {
 					return;
@@ -163,10 +164,10 @@ export class PremadeCommand extends Commando.Command {
 				const matchInfo: IMatch = {
 					nanoid: nanoid(12),
 					lobby: lobby || 'unknown',
-					startQueue: new Date().toISOString(),
+					startQueue: currentStatus.queueStartTimes.has(msg.channel.id) ? currentStatus.queueStartTimes.get(msg.channel.id).toISOString() : new Date().toISOString(),
 					filledTime: new Date().toISOString(),
 					result: 12,
-					rerollCount: currentStatus.rerollCount.get(msg.channel.id) || 0,
+					rerollCount: 0,
 					teamSelectionSec: timeToTeam,
 					participants
 				};
