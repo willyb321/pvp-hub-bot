@@ -54,6 +54,7 @@ export interface ICurrentStatus {
 	timeouts: Map<string, any>;
 	rerollCount: Map<string, number>;
 	queueEmbed: Discord.MessageEmbed;
+	premadeHappening: boolean;
 	collectors: Map<string, Discord.ReactionCollector[]>;
 }
 
@@ -68,6 +69,7 @@ export const currentStatus: ICurrentStatus = {
 	queueTeamTimes: new Map(),
 	timeouts: new Map(),
 	rerollCount: new Map(),
+	premadeHappening: false,
 	queueEmbed: genEmbed('Current Queues', 'Updated when queues change.'),
 	collectors: new Map()
 };

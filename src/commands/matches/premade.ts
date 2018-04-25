@@ -55,26 +55,43 @@ export class PremadeCommand extends Commando.Command {
 		if (!message.channel || !message.channel.id) {
 			return false;
 		}
+		if (currentStatus.premadeHappening === true) {
+			return false;
+		}
 		return message.channel.id === config.premadeChannelId
 	}
 
 	async run(message, args) {
 		const teamsNumber = args.teamsNumber;
+
+		currentStatus.premadeHappening = true;
 		let text = `Premade for ${message.channel.toString()}:\n`;
 		let t1 = `Team 1:\n`;
 		let t2 = `Team 2:\n`;
 		let teamsToUse = [[], []];
 		const reaction_numbers = ["\u0030\u20E3", "\u0031\u20E3", "\u0032\u20E3", "\u0033\u20E3", "\u0034\u20E3", "\u0035\u20E3", "\u0036\u20E3", "\u0037\u20E3", "\u0038\u20E3", "\u0039\u20E3"];
+		const reaction_stop = "\uD83D\uDED1";
 		const oneOrTwo = val => val.toString() === reaction_numbers[1].toString() ? 0 : 1;
 		let msg;
 		try {
 			msg = await message.channel.send(`${text}${t1}${t2}`);
 			await msg.react(reaction_numbers[1]);
 			await msg.react(reaction_numbers[2]);
+			await msg.react(reaction_stop);
 			const filter = (reaction, user) => reaction.emoji.name === reaction_numbers[1] || reaction.emoji.name === reaction_numbers[2] && user.id !== message.client.user.id;
 			const filterTwo = (reaction, user) => reaction.emoji.name === reaction_numbers[2] && user.id !== message.client.user.id;
+			const filterStop = (reaction, user) => reaction.emoji.name === reaction_stop && user.id !== message.client.user.id;
 			const filterOne = (reaction, user) => reaction.emoji.name === reaction_numbers[1] && user.id !== message.client.user.id;
 			const addone = new Discord.ReactionCollector(msg, filter, {dispose: true});
+			const stop = new Discord.ReactionCollector(msg, filterStop, {maxUsers: teamsNumber});
+			stop.on('end', async (reactions, reason) => {
+				if (reason === 'cleanup') {
+					return;
+				}
+				addone.stop('cancelled');
+				await msg.delete();
+				await message.channel.send('Premade cancelled.');
+			});
 			addone.on('remove', async (reaction, user) => {
 				let what = 0;
 				if (reaction.emoji.toString() === reaction_numbers[2]) {
@@ -119,6 +136,9 @@ export class PremadeCommand extends Commando.Command {
 
 			});
 			addone.on('end', async (reactions, reason) => {
+				if (reason === 'cancelled') {
+					return;
+				}
 				t1 = `Team 1:\n${teamsToUse[0].join('\n')}\n`;
 				t2 = `Team 2:\n${teamsToUse[1].join('\n')}\n`;
 				await message.channel.send(`${text}\n${t1}\n${t2}`);
@@ -177,6 +197,7 @@ export class PremadeCommand extends Commando.Command {
 				const timeout = setTimeout(() => {
 					resetCounters(msg);
 				}, 3000);
+				currentStatus.premadeHappening = false;
 				currentStatus.timeouts.set(msg.channel.id, timeout);
 			});
 		} catch (err) {

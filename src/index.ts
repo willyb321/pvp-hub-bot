@@ -95,17 +95,14 @@ client.setProvider(
 
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
-client.on('ready', () => {
+client.on('ready', async () => {
 	console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
-	client.user.setActivity('the pew pews')
-		.then(() => {
-			// config.allowedChannels.forEach(elem => {
-			// 	currentStatus.currentUsers.set(elem, []);
-			// });
-		})
-		.catch(err => {
-			Raven.captureException(err);
-		});
+	try {
+		await client.user.setActivity('the pew pews');
+	} catch (err) {
+		console.error(err);
+		Raven.captureException(err);
+	}
 	setTimeout(setUpLobbies, 1000);
 });
 
@@ -143,7 +140,7 @@ async function setUpLobbies() {
 					msg = await channel.messages.fetch(channel.lastMessageID);
 				}
 			} catch (err) {
-				if (err.code !== 50001) {
+				if (err.code !== 50001 && err.code !== 10008) {
 					console.error(err);
 					Raven.captureException(err);
 				}
