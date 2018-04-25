@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {config, currentStatus, resetCounters} from '../../utils';
+import {collectors, config, currentStatus, figureOutTeams, genThreshold, resetCounters, teams} from '../../utils';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
@@ -191,10 +191,7 @@ export class PremadeCommand extends Commando.Command {
 					});
 
 				currentStatus.locked.set(msg.channel.id, true);
-				if (currentStatus.collectors.has(message.channel.id)) {
-					currentStatus.collectors.get(message.channel.id).forEach(elem => elem.stop('cleanup'));
-					currentStatus.collectors.delete(message.channel.id);
-				}
+				collectors.forEach(elem => elem.stop('cleanup'));
 				const timeout = setTimeout(() => {
 					resetCounters(msg);
 				}, 3000);

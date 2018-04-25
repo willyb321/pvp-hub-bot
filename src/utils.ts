@@ -34,6 +34,8 @@ Raven.config(config.ravenDSN, {
 		return data;
 	}
 }).install();
+export const collectors: Discord.ReactionCollector[] = [];
+
 
 export const genEmbed = (title, desc) => new Discord.MessageEmbed()
 	.setTitle(title)
@@ -55,7 +57,6 @@ export interface ICurrentStatus {
 	rerollCount: Map<string, number>;
 	queueEmbed: Discord.MessageEmbed;
 	premadeHappening: boolean;
-	collectors: Map<string, Discord.ReactionCollector[]>;
 }
 
 export const currentStatus: ICurrentStatus = {
@@ -71,7 +72,6 @@ export const currentStatus: ICurrentStatus = {
 	rerollCount: new Map(),
 	premadeHappening: false,
 	queueEmbed: genEmbed('Current Queues', 'Updated when queues change.'),
-	collectors: new Map()
 };
 
 export const chunk = (target, size) => {
@@ -118,10 +118,8 @@ export function resetCounters(message: Message) {
 	currentStatus.queueStartTimes.delete(message.channel.id);
 	currentStatus.queueEndTimes.delete(message.channel.id);
 	currentStatus.queueTeamTimes.delete(message.channel.id);
-	if (currentStatus.collectors.has(message.channel.id)) {
-		currentStatus.collectors.get(message.channel.id).forEach(elem => elem.stop('cleanup'));
-		currentStatus.collectors.delete(message.channel.id)
-	}
+	collectors.forEach(elem => elem.stop('cleanup'));
+	collectors.slice(0, collectors.length);
 	updateQueues()
 		.catch(err => {
 			console.error(err);
@@ -172,9 +170,6 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 	if (!currentStatus.currentUsers.has(message.channel.id)) {
 		currentStatus.currentUsers.set(message.channel.id, []);
 	}
-	if (!currentStatus.collectors.has(message.channel.id)) {
-		currentStatus.currentUsers.set(message.channel.id, []);
-	}
 	if (!currentStatus.rerollCount.has(message.channel.id)) {
 		currentStatus.rerollCount.set(message.channel.id, 0);
 	}
@@ -188,9 +183,9 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 	if (currentStatus.currentUsers.get(message.channel.id).length < teamsNumber * 2) {
 		return message.reply('Get some more people!');
 	}
-	if (currentStatus.collectors.get(message.channel.id).length > 0) {
-		currentStatus.collectors.get(message.channel.id).forEach(elem => elem.stop('cleanup'));
-		currentStatus.collectors.delete(message.channel.id);
+	if (collectors.length > 0) {
+		collectors.forEach(elem => elem.stop('cleanup'));
+		collectors.slice(0, collectors.length);
 	}
 	const curTeams = currentStatus.teams.get(message.channel.id);
 	const curTeamLength =
@@ -235,20 +230,14 @@ function teamsReactionReroll(msg: Discord.Message, threshold: number) {
 	return msg.react('🔄')
 		.then(() => {
 			const reroll = new Discord.ReactionCollector(msg, filterReroll, {maxUsers: threshold});
-			currentStatus.collectors.get(msg.channel.id).push(reroll);
-			if (!currentStatus.collectors.has(msg.channel.id)) {
-				currentStatus.collectors.set(msg.channel.id, [reroll]);
-			}
+			collectors.push(reroll);
 			reroll.on('end', (elems, reason) => {
 				if (reason === 'cleanup') {
 					return;
 				}
 				console.log(`Reroll collector ended with reason: ${reason}`);
 				currentStatus.rerollCount.set(msg.channel.id, currentStatus.rerollCount.get(msg.channel.id) + 1);
-				if (currentStatus.collectors.has(msg.channel.id)) {
-					currentStatus.collectors.get(msg.channel.id).forEach(elem => elem.stop('cleanup'));
-					currentStatus.collectors.delete(msg.channel.id)
-				}
+				collectors.forEach(elem => elem.stop('cleanup'));
 				teams(msg, true);
 			});
 		})
@@ -262,10 +251,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 	return msg.react('✅')
 		.then(() => {
 			const reroll = new Discord.ReactionCollector(msg, filterApprove, {maxUsers: threshold});
-			currentStatus.collectors.get(msg.channel.id).push(reroll);
-			if (!currentStatus.collectors.has(msg.channel.id)) {
-				currentStatus.collectors.set(msg.channel.id, [reroll]);
-			}
+			collectors.push(reroll);
 			reroll.on('end', (elems, reason) => {
 				if (reason === 'cleanup') {
 					return;
@@ -319,10 +305,7 @@ function teamsReactionApprove(msg: Discord.Message, threshold: number) {
 					});
 
 				currentStatus.locked.set(msg.channel.id, true);
-				if (currentStatus.collectors.has(msg.channel.id)) {
-					currentStatus.collectors.get(msg.channel.id).forEach(elem => elem.stop('cleanup'));
-					currentStatus.collectors.delete(msg.channel.id);
-				}
+				collectors.forEach(elem => elem.stop('cleanup'));
 				const timeout = setTimeout(() => {
 					resetCounters(msg);
 				}, 3000);
