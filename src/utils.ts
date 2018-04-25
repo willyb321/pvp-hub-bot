@@ -172,6 +172,9 @@ export function teams(message: Discord.Message, reroll?: boolean) {
 	if (!currentStatus.currentUsers.has(message.channel.id)) {
 		currentStatus.currentUsers.set(message.channel.id, []);
 	}
+	if (!currentStatus.collectors.has(message.channel.id)) {
+		currentStatus.currentUsers.set(message.channel.id, []);
+	}
 	if (!currentStatus.rerollCount.has(message.channel.id)) {
 		currentStatus.rerollCount.set(message.channel.id, 0);
 	}
