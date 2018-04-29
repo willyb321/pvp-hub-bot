@@ -92,6 +92,7 @@ export class PremadeCommand extends Commando.Command {
 				addone.stop('cancelled');
 				await msg.delete();
 				await message.channel.send('Premade cancelled.');
+				currentStatus.premadeHappening = false;
 			});
 			addone.on('remove', async (reaction, user) => {
 				let what = 0;
