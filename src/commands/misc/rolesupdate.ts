@@ -73,6 +73,10 @@ export class RolesCommand extends Commando.Command {
 		Promise.all(promises)
 			.then(users => {
 				users.forEach((elem, idx) => {
+					if (idx % 50 === 0 || idx === users.length - 1) {
+						let rolesUpdateMsg = `Processed ${idx} / ${users.length - 1}`;
+						logToBotSpam(rolesUpdateMsg);
+					}
 					if (elem && elem.length > 0) {
 						console.log(`User: ${names[idx]} - ${elem.length} Matches`);
 						let roleToGive = '';
