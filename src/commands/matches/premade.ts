@@ -44,6 +44,7 @@ export class PremadeCommand extends Commando.Command {
 			args: [
 				{
 					key: 'teamsNumber',
+					min: 2,
 					prompt: 'How many per side? (2 for 2v2)',
 					type: 'integer'
 				}
