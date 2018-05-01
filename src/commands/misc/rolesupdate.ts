@@ -18,6 +18,7 @@ const twofiveID = '407634353795891203';
 const fiftyID = '407634390248587284';
 const hundredplusID = '407634430195138561';
 const twohundredplusID = '426611540041531397';
+const rolesInOrder = [tenID, twofiveID, fiftyID, hundredplusID, twohundredplusID];
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -55,7 +56,7 @@ export class RolesCommand extends Commando.Command {
 		if (!msg.guild.members) {
 			return false;
 		}
-		return !!client.isOwner(msg.author);
+		return client.isOwner(msg.author);
 	}
 
 	async run(message) {
@@ -99,9 +100,29 @@ export class RolesCommand extends Commando.Command {
 						if (member) {
 							const role = message.guild.roles.find('id', roleToGive);
 							if (role) {
-								let rolesUpdateMsg = `Roles updated for ${member.displayName}:\n`;
-
+								let rolesUpdateMsg = `Roles updated for \`${member.displayName}\`:\n`;
 								console.log(`Giving ${member.displayName} ${role.name} role`);
+								for (let i = 0; i < rolesInOrder.length; i++) {
+									if (role.id === rolesInOrder[i]) {
+										break;
+									}
+									const oldRole = message.guild.roles.get(rolesInOrder[i]);
+									if (!oldRole) {
+										continue;
+									}
+									if (member.roles.get(rolesInOrder[i])) {
+										rolesUpdateMsg += `Removing ${oldRole.name} from ${member.displayName}. Giving them ${role.name} instead.\n\n`;
+										member.roles.remove(oldRole)
+											.then(() => {
+												console.log(`Removed ${oldRole.name} from ${member.displayName}`);
+											})
+											.catch(err => {
+												console.error(err);
+												Raven.captureException(err);
+											})
+									}
+								}
+
 								if (member.roles.get(role.id)) {
 									return;
 								}
