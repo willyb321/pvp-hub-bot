@@ -110,7 +110,7 @@ export class RolesCommand extends Commando.Command {
 									if (!oldRole) {
 										continue;
 									}
-									if (member.roles.get(rolesInOrder[i])) {
+									if (member.roles.has(oldRole.id)) {
 										rolesUpdateMsg += `Removing ${oldRole.name} from ${member.displayName}. Giving them ${role.name} instead.\n\n`;
 										member.roles.remove(oldRole)
 											.then(() => {
