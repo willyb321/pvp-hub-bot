@@ -57,6 +57,7 @@ export class LeaderBoardCommand extends Commando.Command {
 						console.log(elems[i])
 						const member = message.guild.members.get(elems[i]._id);
 						if (!member) {
+							embed.addField(`#${parseInt(i) + 1}`, `Someone who left - ${elems[i].count} matches`);
 							continue;
 						}
 						console.log(`User: ${member.displayName} - ${elems[i].count} Matches`);
