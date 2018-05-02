@@ -18,7 +18,8 @@ const twofiveID = '407634353795891203';
 const fiftyID = '407634390248587284';
 const hundredplusID = '407634430195138561';
 const twohundredplusID = '426611540041531397';
-const rolesInOrder = [tenID, twofiveID, fiftyID, hundredplusID, twohundredplusID];
+const threehundredplusID = '426611540041531397';
+const rolesInOrder = [tenID, twofiveID, fiftyID, hundredplusID, twohundredplusID, threehundredplusID];
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -96,9 +97,12 @@ export class RolesCommand extends Commando.Command {
 						if (elem.length >= 200) {
 							roleToGive = twohundredplusID;
 						}
-						const member = message.guild.members.find('id', ids[idx]);
+						if (elem.length >= 300) {
+							roleToGive = threehundredplusID;
+						}
+						const member = message.guild.members.get(ids[idx]);
 						if (member) {
-							const role = message.guild.roles.find('id', roleToGive);
+							const role = message.guild.roles.get(roleToGive);
 							if (role) {
 								let rolesUpdateMsg = `Roles updated for \`${member.displayName}\`:\n`;
 								console.log(`Giving ${member.displayName} ${role.name} role`);
