@@ -18,7 +18,7 @@ const twofiveID = '407634353795891203';
 const fiftyID = '407634390248587284';
 const hundredplusID = '407634430195138561';
 const twohundredplusID = '426611540041531397';
-const threehundredplusID = '426611540041531397';
+const threehundredplusID = '441095471742582794';
 const rolesInOrder = [tenID, twofiveID, fiftyID, hundredplusID, twohundredplusID, threehundredplusID];
 
 Raven.config(config.ravenDSN, {
