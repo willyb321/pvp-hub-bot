@@ -4,7 +4,7 @@
   "description": "PvP Hub Bot.",
   "license": "MIT",
   "repository": {
-    "url": "https://github.com/willyb321/aa-training-bot"
+    "url": "https://github.com/willyb321/pvp-hub-bot.git"
   },
   "version": "0.0.1",
   "scripts": {

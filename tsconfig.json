@@ -7,7 +7,11 @@
 		"preserveConstEnums": true,
 		"removeComments": true,
 		"inlineSourceMap": true,
-		"sourceRoot": "src/",
+    "sourceRoot": "src/",
+    "typeRoots": [
+      "./node_modules/*",
+      "./node_modules/@types/"
+    ],
 		"outDir": "dist/",
 		"lib": ["es2016", "dom"]
 	},

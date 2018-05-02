@@ -1,4 +1,3 @@
-///<reference path="../node_modules/sqlite/main.d.ts"/>
 /**
  * @module Index
  */
