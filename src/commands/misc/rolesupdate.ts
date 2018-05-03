@@ -10,8 +10,8 @@ import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
 import {Match} from '../../db';
 import {basename} from 'path';
-import {TextChannel} from "discord.js";
-import * as _ from "lodash";
+import {TextChannel} from 'discord.js';
+import * as _ from 'lodash';
 
 const tenID = '407634274217492480';
 const twofiveID = '407634353795891203';
@@ -65,7 +65,7 @@ export class RolesCommand extends Commando.Command {
 		const ids = [];
 		const names = [];
 		message.guild.members.forEach(elem => {
-			const promise = Match.find({"participants.id": elem.id});
+			const promise = Match.find({'participants.id': elem.id});
 			promises.push(promise);
 			ids.push(elem.id);
 			names.push(elem.displayName);
@@ -76,7 +76,7 @@ export class RolesCommand extends Commando.Command {
 			.then(users => {
 				users.forEach((elem, idx) => {
 					if (idx % 50 === 0 || idx === users.length - 1) {
-						let rolesUpdateMsg = `Processed ${idx} / ${users.length - 1}`;
+						const rolesUpdateMsg = `Processed ${idx} / ${users.length - 1}`;
 						logToBotSpam(rolesUpdateMsg);
 					}
 					if (elem && elem.length > 0) {
@@ -123,7 +123,7 @@ export class RolesCommand extends Commando.Command {
 											.catch(err => {
 												console.error(err);
 												Raven.captureException(err);
-											})
+											});
 									}
 								}
 
@@ -138,7 +138,7 @@ export class RolesCommand extends Commando.Command {
 									.catch(err => {
 										Raven.captureException(err);
 										console.error(err);
-									})
+									});
 							}
 						}
 					}

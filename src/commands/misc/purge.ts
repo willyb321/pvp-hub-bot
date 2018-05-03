@@ -34,7 +34,7 @@ export class PurgeCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return client.isOwner(message.author)
+		return client.isOwner(message.author);
 	}
 	async run(message, args) {
 

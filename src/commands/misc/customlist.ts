@@ -37,17 +37,17 @@ export class CustomGetCommand extends Commando.Command {
 				try {
 					elem = JSON.parse(elem.settings);
 					const keys = Object.keys(elem);
-					let reply = `Custom commands list:\n`;
+					let reply = 'Custom commands list:\n';
 					keys.forEach(key => reply += `${key} - ${truncateString(elem[key], 35)}\n`);
 					return msg.channel.send(reply);
 				} catch (err) {
 					console.error(err);
-					return msg.channel.send(`Had an error. Contact willyb321#2816`);
+					return msg.channel.send('Had an error. Contact willyb321#2816');
 				}
 			})
 			.catch(err => {
 				console.error(err);
-				return msg.channel.send(`Had an error. Contact willyb321#2816`);
+				return msg.channel.send('Had an error. Contact willyb321#2816');
 			});
 	}
-};
+}

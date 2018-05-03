@@ -12,15 +12,14 @@ import * as _ from 'lodash';
 import {config} from './config';
 export {config} from './config';
 
-import {genMatchModel, IMatch, IMatchDoc, IParticipants} from "./db";
-import {client} from "./index";
-import {Message} from "discord.js";
-import {updateQueues} from "./queuesUpdate";
-
+import {genMatchModel, IMatch, IMatchDoc, IParticipants} from './db';
+import {client} from './index';
+import {Message} from 'discord.js';
+import {updateQueues} from './queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -35,7 +34,6 @@ Raven.config(config.ravenDSN, {
 	}
 }).install();
 export const collectors: Discord.ReactionCollector[] = [];
-
 
 export const genEmbed = (title, desc) => new Discord.MessageEmbed()
 	.setTitle(title)
@@ -90,7 +88,7 @@ export function reset(message: Message, timeout?: boolean) {
 		return resetCounters(message);
 	}
 	if (!message.channel) {
-		return
+		return;
 	}
 	if (message.member && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 		return resetCounters(message);
@@ -127,7 +125,6 @@ export function resetCounters(message: Message) {
 		});
 	return message.channel.send('New session created.');
 }
-
 
 export const genThreshold = teamsNumber => Math.floor((75 / 100) * (teamsNumber * 2));
 

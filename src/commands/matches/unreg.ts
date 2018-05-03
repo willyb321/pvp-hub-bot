@@ -12,7 +12,7 @@ import {updateQueues} from '../../queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -49,7 +49,7 @@ export class UnregCommand extends Commando.Command {
 		if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 			return false;
 		}
-		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)
+		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
 
 	}
 

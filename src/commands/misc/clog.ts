@@ -4,8 +4,8 @@
 /**
  * ignore
  */
-import {genEmbed} from "../../utils";
-import {config} from "../../config";
+import {genEmbed} from '../../utils';
+import {config} from '../../config';
 import * as Commando from 'discord.js-commando';
 import * as Snoowrap from 'snoowrap';
 
@@ -48,7 +48,7 @@ export class ECLCommand extends Commando.Command {
 			elems = await lookUpOnECL(args.name);
 		} catch (err) {
 			console.error(err);
-			return message.channel.send('Something broke. Ping willyb321#2816')
+			return message.channel.send('Something broke. Ping willyb321#2816');
 		}
 		const embed = genEmbed('Combat logger found', '')
 			.setAuthor('Combat Log', 'https://willb.info/i/f67c5f149780f7644da35a6121d93096');

@@ -8,14 +8,14 @@ import {config, genEmbed} from '../../utils';
 import {client} from '../../index';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
-import {IMatch, IMatchDoc, IParticipants, Match} from '../../db';
+import {Match} from '../../db';
 import {basename} from 'path';
-import {Role} from "discord.js";
-import * as _ from "lodash";
+import {Role} from 'discord.js';
+import * as _ from 'lodash';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -60,7 +60,7 @@ export class GameCountCommand extends Commando.Command {
 						console.log(`User: ${message.author.tag} - 0 Matches`);
 						const member = message.member;
 						if (member) {
-							const embed = genEmbed(`${member.displayName} # of matches`, `0 matches`);
+							const embed = genEmbed(`${member.displayName} # of matches`, '0 matches');
 							return message.channel.send({embed});
 						}
 					}

@@ -10,14 +10,14 @@ import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
 import {config, currentStatus, figureOutTeams} from './utils';
 import {basename, join} from 'path';
-import * as sqlite from 'sqlite'
+import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
-import {TextChannel} from "discord.js";
+import {TextChannel} from 'discord.js';
 import {updateQueues} from './queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -105,7 +105,7 @@ client.on('ready', async () => {
 	setTimeout(setUpLobbies, 1000);
 });
 
-client.on('guildMemberAdd', (member) => {
+client.on('guildMemberAdd',member => {
 	const channel = member.guild.channels.get(config.botLogID) as TextChannel;
 	if (!channel) {
 		return;
@@ -113,7 +113,7 @@ client.on('guildMemberAdd', (member) => {
 	channel.send(`<@${member.id}> joined the server`);
 });
 
-client.on('guildMemberRemove', (member) => {
+client.on('guildMemberRemove',member => {
 	const channel = member.guild.channels.get(config.botLogID) as TextChannel;
 	if (!channel) {
 		return;
@@ -129,7 +129,7 @@ async function setUpLobbies() {
 	const channels = guild.channels;
 	if (channels) {
 		channels.array().forEach(async chan => {
-			let channel = chan as TextChannel;
+			const channel = chan as TextChannel;
 			if (channel.type !== 'text') {
 				return;
 			}

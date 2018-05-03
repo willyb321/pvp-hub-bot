@@ -4,14 +4,14 @@
 /**
  * ignore
  */
-import { config, genEmbed } from '../../utils';
-import { client } from '../../index';
+import {config, genEmbed} from '../../utils';
+import {client} from '../../index';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
-import { IMatch, IMatchDoc, IParticipants, Match } from '../../db';
-import { basename } from 'path';
-import { Role } from "discord.js";
-import * as _ from "lodash";
+import {Match} from '../../db';
+import {basename} from 'path';
+import {Role} from 'discord.js';
+import * as _ from 'lodash';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -47,14 +47,14 @@ export class LeaderBoardCommand extends Commando.Command {
 	}
 
 	async run(message) {
-		return Match.aggregate([{ $unwind: "$participants" }, { $sortByCount: "$participants.id" }])
+		return Match.aggregate([{$unwind: '$participants'}, {$sortByCount: '$participants.id'}])
 			.limit(25)
 			.sort({count: -1})
 			.then(elems => {
 				if (elems && elems.length > 0) {
-					const embed = genEmbed(`${message.guild.name} # of matches`, `Sorted by match count.`);
+					const embed = genEmbed(`${message.guild.name} # of matches`, 'Sorted by match count.');
 					for (const i in elems) {
-						console.log(elems[i])
+						console.log(elems[i]);
 						const member = message.guild.members.get(elems[i]._id);
 						if (!member) {
 							embed.addField(`#${parseInt(i) + 1}`, `Someone who left - ${elems[i].count} matches`);
@@ -65,7 +65,7 @@ export class LeaderBoardCommand extends Commando.Command {
 					}
 					return message.channel.send({embed});
 				} else {
-					return message.channel.send('¯\\_(ツ)_/¯')
+					return message.channel.send('¯\\_(ツ)_/¯');
 				}
 			});
 	}

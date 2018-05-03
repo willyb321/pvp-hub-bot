@@ -14,7 +14,7 @@ import {updateQueues} from '../../queuesUpdate';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -44,7 +44,7 @@ export class RegisterCommand extends Commando.Command {
 		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
-		return config.allowedChannels.includes(message.channel.id)
+		return config.allowedChannels.includes(message.channel.id);
 	}
 	async run(message) {
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
@@ -53,7 +53,7 @@ export class RegisterCommand extends Commando.Command {
 		if (!currentStatus.queueStartTimes.has(message.channel.id)) {
 			currentStatus.queueStartTimes.set(message.channel.id, new Date());
 		}
-		let teamsNumber = currentStatus.teamsNumber.get(message.channel.id);
+		const teamsNumber = currentStatus.teamsNumber.get(message.channel.id);
 		if (!teamsNumber) {
 			const teamsNumber = figureOutTeams(message.channel);
 			currentStatus.teamsNumber.set(message.channel.id, teamsNumber);

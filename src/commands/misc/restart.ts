@@ -12,7 +12,7 @@ import {basename} from 'path';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -41,7 +41,7 @@ export class RestartCommand extends Commando.Command {
 
 	hasPermission(msg) {
 		if (client.isOwner(msg.author)) {
-			return true
+			return true;
 		}
 		if (!msg.member) {
 			return false;

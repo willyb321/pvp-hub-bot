@@ -11,7 +11,7 @@ import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -44,9 +44,9 @@ export class PromoteCommand extends Commando.Command {
 			return false;
 		}
 		if (!currentStatus.currentUsers.has(msg.channel.id)) {
-			return false
+			return false;
 		}
-		return !!currentStatus.currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id)
+		return !!currentStatus.currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id);
 	}
 	async run(msg, args) {
 		if (!currentStatus.teamsNumber.has(msg.channel.id)) {

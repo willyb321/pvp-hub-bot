@@ -9,14 +9,14 @@ import * as Raven from 'raven';
 import {IMatchDoc, Match} from '../../db';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
-import {client} from "../../index";
+import {client} from '../../index';
 
 const PastebinAPI = require('pastebin-js');
 const pastebin = new PastebinAPI(config.pastebinKey);
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {

@@ -45,7 +45,7 @@ export class CustomGetCommand extends Commando.Command {
 			val = provider.get(guild, name, notFound);
 		} catch (err) {
 			console.error(err);
-			return msg.reply(`Had an error! Contact willyb321#2816`);
+			return msg.reply('Had an error! Contact willyb321#2816');
 		}
 		if (!val || val === notFound) {
 			return msg.reply(notFound);
@@ -53,4 +53,4 @@ export class CustomGetCommand extends Commando.Command {
 		console.log(`Found custom command ${name} with value ${val.toString()}`);
 		return msg.channel.send(val);
 	}
-};
+}

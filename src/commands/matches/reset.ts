@@ -10,11 +10,11 @@ import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';
 import {updateQueues} from '../../queuesUpdate';
-import {Message} from "discord.js";
+import {Message} from 'discord.js';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
-	dataCallback (data) { // source maps
+	dataCallback(data) { // source maps
 		const stacktrace = data.exception && data.exception[0].stacktrace;
 
 		if (stacktrace && stacktrace.frames) {
@@ -48,13 +48,12 @@ export class NewCommand extends Commando.Command {
 			return false;
 		}
 		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			return true
+			return true;
 		}
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
-			return false
+			return false;
 		}
 		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
-
 
 	}
 	async run(message) {
@@ -62,4 +61,3 @@ export class NewCommand extends Commando.Command {
 	}
 
 }
-

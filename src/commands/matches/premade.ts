@@ -4,15 +4,15 @@
 /**
  * ignore
  */
-import {collectors, config, currentStatus, figureOutTeams, genThreshold, resetCounters, teams} from '../../utils';
+import {collectors, config, currentStatus, resetCounters} from '../../utils';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as _ from 'lodash';
 import * as nanoid from 'nanoid';
-import * as Discord from "discord.js";
-import {genMatchModel, IMatch, IMatchDoc, IParticipants} from "../../db";
-import {client} from "../../index";
+import * as Discord from 'discord.js';
+import {genMatchModel, IMatch, IMatchDoc, IParticipants} from '../../db';
+import {client} from '../../index';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -59,19 +59,19 @@ export class PremadeCommand extends Commando.Command {
 		if (currentStatus.premadeHappening === true) {
 			return false;
 		}
-		return message.channel.id === config.premadeChannelId
+		return message.channel.id === config.premadeChannelId;
 	}
 
 	async run(message, args) {
 		const teamsNumber = args.teamsNumber;
 
 		currentStatus.premadeHappening = true;
-		let text = `Premade for ${message.channel.toString()}:\n`;
-		let t1 = `Team 1:\n`;
-		let t2 = `Team 2:\n`;
-		let teamsToUse = [[], []];
-		const reaction_numbers = ["\u0030\u20E3", "\u0031\u20E3", "\u0032\u20E3", "\u0033\u20E3", "\u0034\u20E3", "\u0035\u20E3", "\u0036\u20E3", "\u0037\u20E3", "\u0038\u20E3", "\u0039\u20E3"];
-		const reaction_stop = "\uD83D\uDED1";
+		const text = `Premade for ${message.channel.toString()}:\n`;
+		let t1 = 'Team 1:\n';
+		let t2 = 'Team 2:\n';
+		const teamsToUse = [[], []];
+		const reaction_numbers = ['\u0030\u20E3', '\u0031\u20E3', '\u0032\u20E3', '\u0033\u20E3', '\u0034\u20E3', '\u0035\u20E3', '\u0036\u20E3', '\u0037\u20E3', '\u0038\u20E3', '\u0039\u20E3'];
+		const reaction_stop = '\uD83D\uDED1';
 		const oneOrTwo = val => val.toString() === reaction_numbers[1].toString() ? 0 : 1;
 		let msg;
 		try {
@@ -117,7 +117,7 @@ export class PremadeCommand extends Commando.Command {
 				await msg.edit(`${text}${t1}${t2}`);
 			});
 			addone.on('collect', async (reaction, user) => {
-				let what = oneOrTwo(reaction.emoji.name);
+				const what = oneOrTwo(reaction.emoji.name);
 				teamsToUse[what].push(user);
 				teamsToUse[what] = _.uniqBy(teamsToUse[what], 'id');
 				if (teamsToUse[what === 1 ? 0 : 1].find(elem => elem.id === user.id)) {
@@ -150,7 +150,7 @@ export class PremadeCommand extends Commando.Command {
 				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - curTime);
 				const participants: IParticipants[] = [];
-				const channel: any = msg.channel;
+				const channel = msg.channel;
 				let lobby;
 				try {
 					lobby = channel.name;
@@ -208,4 +208,3 @@ export class PremadeCommand extends Commando.Command {
 		}
 	}
 }
-

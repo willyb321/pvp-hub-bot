@@ -50,11 +50,11 @@ export class CustomDelCommand extends Commando.Command {
 		return provider.remove(guild, name)
 			.then(() => {
 				console.log(`Removed custom command ${name}`);
-				return msg.reply(`Removed custom command ${name}`)
+				return msg.reply(`Removed custom command ${name}`);
 			})
 			.catch(err => {
 				console.error(err);
-				return msg.reply(`Had an error! Contact willyb321#2816.`);
+				return msg.reply('Had an error! Contact willyb321#2816.');
 			});
 	}
 }

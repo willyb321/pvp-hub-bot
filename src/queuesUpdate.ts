@@ -48,6 +48,6 @@ export async function updateQueues() {
 				console.error(err);
 				Raven.captureException(err);
 				queueChannel.send({embed: currentStatus.queueEmbed});
-			})
+			});
 	}
 }

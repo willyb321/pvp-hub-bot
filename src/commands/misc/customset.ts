@@ -59,11 +59,11 @@ export class CustomSetCommand extends Commando.Command {
 		return provider.set(guild, name, val)
 			.then(() => {
 				console.log(`Added custom command ${name}`);
-				return msg.reply(`Added custom command ${name}`)
+				return msg.reply(`Added custom command ${name}`);
 			})
 			.catch(err => {
 				console.error(err);
-				return msg.reply(`Had an error! Contact willyb321#2816.`);
+				return msg.reply('Had an error! Contact willyb321#2816.');
 			});
 
 	}
