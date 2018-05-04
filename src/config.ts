@@ -1,10 +1,14 @@
 /**
  * @module Utils
  */
-/**
- * ignore
- */
-const confToUse = process.env.SERVER_ENV === 'pvphub' ? '../config.pvphub.json' : '../config.arctic.json';
+let confToUse;
+if (process.env.SERVER_ENV === 'pvphub' && process.env.NODE_ENV === 'development') {
+	confToUse = '../config.pvphub.test.json';
+} else if (process.env.SERVER_ENV === 'pvphub') {
+	confToUse = '../config.pvphub.json';
+} else {
+	confToUse = '../config.arctic.json';
+}
 
 export const config: IConfig = require(confToUse);
 
@@ -23,6 +27,12 @@ export interface IConfig {
 	pastebinKey: string;
 	botLogID: string;
 	redditClientId: string;
+	tenID: string;
+	twofiveID: string;
+	fiftyID: string;
+	hundredplusID: string;
+	twohundredplusID: string;
+	threehundredplusID: string;
 	redditClientSecret: string;
 	redditRefreshToken: string;
 }
