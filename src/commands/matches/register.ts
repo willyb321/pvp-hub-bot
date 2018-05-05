@@ -41,10 +41,7 @@ export class RegisterCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		if (!isNaN(figureOutTeams(message.channel))) {
-			return true;
-		}
-		return config.allowedChannels.includes(message.channel.id);
+		return !isNaN(figureOutTeams(message.channel));
 	}
 	async run(message) {
 		if (!currentStatus.currentUsers.has(message.channel.id)) {
