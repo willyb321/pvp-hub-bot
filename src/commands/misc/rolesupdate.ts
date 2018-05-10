@@ -101,25 +101,26 @@ export class RolesCommand extends Commando.Command {
 							if (role) {
 								let rolesUpdateMsg = `Roles updated for \`${member.displayName}\`:\n`;
 								console.log(`Giving ${member.displayName} ${role.name} role`);
-								for (let i = 0; i < rolesInOrder.length; i++) {
-									if (role.id === rolesInOrder[i]) {
-										break;
+								let newRoles;
+								let removedRoles = [];
+								member.roles.clone().array().forEach(oldRole => {
+									if (rolesInOrder.indexOf(oldRole.id) !== -1 && oldRole.id !== role.id && rolesInOrder.indexOf(oldRole.id) !== rolesInOrder.indexOf(role.id)) {
+										console.log(oldRole.name);
+										newRoles = newRoles ? newRoles.clone() : member.roles.clone();
+										newRoles.delete(oldRole.id);
+										removedRoles.push(oldRole.name);
+										rolesUpdateMsg += `Removed ${oldRole.name} from \`${member.displayName}\`\n`;
 									}
-									const oldRole = message.guild.roles.get(rolesInOrder[i]);
-									if (!oldRole) {
-										continue;
-									}
-									if (member.roles.has(oldRole.id)) {
-										rolesUpdateMsg += `Removing ${oldRole.name} from ${member.displayName}. Giving them ${role.name} instead.\n\n`;
-										member.roles.remove(oldRole)
-											.then(() => {
-												console.log(`Removed ${oldRole.name} from ${member.displayName}`);
-											})
-											.catch(err => {
-												console.error(err);
-												Raven.captureException(err);
-											});
-									}
+								});
+								if (newRoles && newRoles.array().length !== member.roles.array().length) {
+									member.roles.set(newRoles, 'Already had another one')
+										.then(() => {
+											console.log(`Removed ${removedRoles.join(', ')} from \`${member.displayName}\``);
+										})
+										.catch(err => {
+											console.error(err);
+											Raven.captureException(err);
+										});
 								}
 
 								if (member.roles.get(role.id)) {
