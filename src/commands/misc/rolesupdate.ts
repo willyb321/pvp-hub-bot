@@ -8,10 +8,10 @@ import {config} from '../../utils';
 import {client} from '../../index';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
+import * as consola from 'consola';
 import {Match} from '../../db';
 import {basename} from 'path';
 import {TextChannel} from 'discord.js';
-import * as _ from 'lodash';
 
 const {tenID, twofiveID, fiftyID, hundredplusID, twohundredplusID, threehundredplusID} = config;
 const rolesInOrder = [tenID, twofiveID, fiftyID, hundredplusID, twohundredplusID, threehundredplusID];
@@ -75,7 +75,7 @@ export class RolesCommand extends Commando.Command {
 						logToBotSpam(rolesUpdateMsg);
 					}
 					if (elem && elem.length > 0) {
-						console.log(`User: ${names[idx]} - ${elem.length} Matches`);
+						consola.info(`User: ${names[idx]} - ${elem.length} Matches`);
 						let roleToGive = '';
 						if (elem.length >= 10) {
 							roleToGive = tenID;
@@ -100,12 +100,12 @@ export class RolesCommand extends Commando.Command {
 							const role = message.guild.roles.get(roleToGive);
 							if (role) {
 								let rolesUpdateMsg = `Roles updated for \`${member.displayName}\`:\n`;
-								console.log(`Giving ${member.displayName} ${role.name} role`);
+								consola.info(`Giving ${member.displayName} ${role.name} role`);
 								let newRoles;
 								let removedRoles = [];
 								member.roles.clone().array().forEach(oldRole => {
 									if (rolesInOrder.indexOf(oldRole.id) !== -1 && oldRole.id !== role.id && rolesInOrder.indexOf(oldRole.id) !== rolesInOrder.indexOf(role.id)) {
-										console.log(oldRole.name);
+										consola.info(oldRole.name);
 										newRoles = newRoles ? newRoles.clone() : member.roles.clone();
 										newRoles.delete(oldRole.id);
 										removedRoles.push(oldRole.name);
@@ -113,9 +113,9 @@ export class RolesCommand extends Commando.Command {
 									}
 								});
 								if (newRoles && newRoles.array().length !== member.roles.array().length) {
-									member.roles.set(newRoles, 'Already had another one')
+									member.roles.set(newRoles, `Already had another role. (Removed: ${removedRoles.join(', ')})`)
 										.then(() => {
-											console.log(`Removed ${removedRoles.join(', ')} from \`${member.displayName}\``);
+											consola.info(`Removed ${removedRoles.join(', ')} from \`${member.displayName}\``);
 										})
 										.catch(err => {
 											console.error(err);
@@ -124,6 +124,11 @@ export class RolesCommand extends Commando.Command {
 								}
 
 								if (member.roles.get(role.id)) {
+									if (rolesUpdateMsg === `Roles updated for \`${member.displayName}\`:\n`) {
+										return;
+									}
+									logToBotSpam(rolesUpdateMsg);
+									rolesUpdateMsg = '';
 									return;
 								}
 								member.roles.add(role)

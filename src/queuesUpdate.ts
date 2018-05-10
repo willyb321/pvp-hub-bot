@@ -6,6 +6,8 @@
  */
 import {config, currentStatus, figureOutTeams, genEmbed} from './utils';
 import {client} from './index';
+import * as consola from 'consola';
+
 import * as Raven from 'raven';
 import {TextChannel, Message} from 'discord.js';
 
@@ -45,7 +47,7 @@ export async function updateQueues() {
 	} else {
 		msg.edit('Queues: ', {embed: currentStatus.queueEmbed})
 			.catch(err => {
-				console.error(err);
+				consola.error(err);
 				Raven.captureException(err);
 				queueChannel.send({embed: currentStatus.queueEmbed});
 			});

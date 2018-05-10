@@ -8,7 +8,8 @@
 import 'source-map-support/register';
 import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
-import {config, currentStatus, figureOutTeams} from './utils';
+import * as consola from 'consola';
+import {config, currentStatus, figureOutTeams, writeLog} from './utils';
 import {basename, join} from 'path';
 import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
@@ -59,26 +60,26 @@ client
 		console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
 	})
 	.on('commandBlocked', (msg, reason) => {
-		console.log(oneLine`
+		consola.info(oneLine`
 			Command ${msg.command ? `${msg.command.groupID}:${msg.command.memberName}` : ''}
 			blocked; ${reason}
 		`);
 	})
 	.on('commandPrefixChange', (guild, prefix) => {
-		console.log(oneLine`
+		consola.info(oneLine`
 			Prefix ${prefix === '' ? 'removed' : `changed to ${prefix || 'the default'}`}
 			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
 		`);
 	})
 	.on('commandStatusChange', (guild, command, enabled) => {
-		console.log(oneLine`
+		consola.info(oneLine`
 			Command ${command.groupID}:${command.memberName}
 			${enabled ? 'enabled' : 'disabled'}
 			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
 		`);
 	})
 	.on('groupStatusChange', (guild, group, enabled) => {
-		console.log(oneLine`
+		consola.info(oneLine`
 			Group ${group.id}
 			${enabled ? 'enabled' : 'disabled'}
 			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
@@ -95,7 +96,7 @@ client.setProvider(
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
 client.on('ready', async () => {
-	console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
+	consola.info(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 	try {
 		await client.user.setActivity('the pew pews');
 	} catch (err) {
@@ -162,6 +163,14 @@ async function setUpLobbies() {
 	}
 }
 
+client.on('message', message => {
+	if (message.channel.type !== 'text') {
+		return;
+	}
+	const channel = message.channel as TextChannel;
+	writeLog(`<${message.author.username}> ${message.content}/${message.id}`, 'Channel - ' + message.guild.name + '/' + channel.name);
+});
+
 client.registry
 	.registerGroup('matches', 'Matches')
 	.registerGroup('misc', 'Misc')
@@ -172,7 +181,7 @@ client.registry
 // Log our bot in
 client.login(config.token)
 	.then(() => {
-		console.log('PvP Hub bot logged in.');
+		consola.info('PvP Hub bot logged in.');
 	})
 	.catch((err: Error) => {
 		Raven.captureException(err);

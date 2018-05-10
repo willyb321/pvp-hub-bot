@@ -11,7 +11,7 @@ import * as nanoid from 'nanoid';
 import * as _ from 'lodash';
 import {config} from './config';
 export {config} from './config';
-
+import * as consola from 'consola';
 import {genMatchModel, IMatch, IMatchDoc, IParticipants} from './db';
 import {client} from './index';
 import {Message} from 'discord.js';
@@ -328,4 +328,12 @@ function unregFromOtherQueues(channel) {
 			}
 		});
 	});
+}
+
+export function writeLog(message, prefix) {
+	if (!prefix) {
+		prefix = '[Debug]'; // By default put [Debug] in front of the message
+	}
+	const logger = consola.withScope(prefix);
+	logger.info(message);
 }
