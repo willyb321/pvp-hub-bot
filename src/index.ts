@@ -129,12 +129,15 @@ async function setUpLobbies() {
 	}
 	const channels = guild.channels;
 	if (channels) {
-		channels.array().forEach(async chan => {
+		channels.forEach(async chan => {
 			const channel = chan as TextChannel;
 			if (channel.type !== 'text') {
 				return;
 			}
 			let msg;
+			if (!isNaN(figureOutTeams(channel))) {
+				currentStatus.currentUsers.set(channel.id, []);
+			}
 			try {
 				if (channel && channel.lastMessageID) {
 					msg = await channel.messages.fetch(channel.lastMessageID);
@@ -148,9 +151,7 @@ async function setUpLobbies() {
 			if (!msg || !channel) {
 				return;
 			}
-			if (!isNaN(figureOutTeams(msg.channel))) {
-				currentStatus.currentUsers.set(channel.id, []);
-			}
+
 		});
 		updateQueues()
 			.then(() => {

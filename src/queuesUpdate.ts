@@ -22,7 +22,12 @@ export async function updateQueues() {
 	if (!msgIDToEdit) {
 		send = true;
 	} else {
-		msg = await queueChannel.messages.fetch(msgIDToEdit);
+		try {
+			msg = await queueChannel.messages.fetch(msgIDToEdit);
+		} catch (err) {
+			console.error(err);
+			send = true;
+		}
 	}
 	if (!currentStatus.queueEmbed) {
 		currentStatus.queueEmbed = genEmbed('Current Queues', 'Updated when queues change.');
