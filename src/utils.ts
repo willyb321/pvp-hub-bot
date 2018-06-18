@@ -136,7 +136,7 @@ export function figureOutTeams(channel: Discord.TextChannel): number {
 		}
 		teamsNumber = parseInt(channel.name.split('v')[0]);
 		if (isNaN(teamsNumber)) {
-			return NaN;
+			return teamsNumber;
 		}
 	} catch (err) {
 		console.log(err);

@@ -40,6 +40,7 @@ export class ResultCommand extends Commando.Command {
 			description: '[Mod] Set result for match. Doesn\'t affect matchmaking.',
 			details: '[Mod] Set result for match. Doesn\'t affect matchmaking.',
 			examples: ['result 13 1'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'matchNum',
@@ -58,6 +59,9 @@ export class ResultCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
+		if (!message || !message.member) {
+			return false
+		}
 		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			return false;
 		}
