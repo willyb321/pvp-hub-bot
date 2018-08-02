@@ -37,9 +37,9 @@ export const collectors: Discord.ReactionCollector[] = [];
 
 export const genEmbed = (title, desc) => new Discord.MessageEmbed()
 	.setTitle(title)
-	.setAuthor('PvP Hub Bot', 'https://willb.info/i/822a4be1252dd25c0632e584f0d016c3')
+	.setAuthor('PvP Hub Bot', 'https://willb.info/images/2018/08/02/pvphubicon.png')
 	.setDescription(desc)
-	.setFooter('By Willyb321', 'https://willb.info/i/2167372b54bbaf90900a8205a28f3733')
+	.setFooter('By Willyb321', 'https://willb.info/images/2018/08/02/pvphubicon.png')
 	.setTimestamp();
 
 export interface ICurrentStatus {
