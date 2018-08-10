@@ -70,7 +70,7 @@ export class EventCommand extends Commando.Command {
 				lockPermissions: true
 			};
 			await channel.edit(editData);
-			await channel.lockPermissions([], 'Archiving channel');
+			await channel.lockPermissions();
 			return channel.send(`${channel.toString()} archived on ${new Date().toISOString()}`);
 		});
 		await msg.guild.channels.create('sign-up', {parent: eventCategory, reason: `Event requested by ${msg.author.tag}`});
