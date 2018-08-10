@@ -23,6 +23,8 @@ export interface IConfig {
 	ravenDSN: string;
 	token: string;
 	mongoURL: string;
+	archiveCategoryId: string;
+	eventCategoryId: string;
 	ownerID: string[];
 	pastebinKey: string;
 	botLogID: string;
