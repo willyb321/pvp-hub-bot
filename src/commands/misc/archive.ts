@@ -43,7 +43,13 @@ export class ArchiveCommand extends Commando.Command {
 					key: 'channel',
 					prompt: 'Channel to archive?',
 					type: 'channel',
-					infinite: false
+					infinite: true,
+					error: 'Channel is already archived',
+					validate: (val, msg) => {
+						const id = val.replace(/(^<#)|(>$)/igm, '');
+						const channel = msg.guild.channels.get(id) as TextChannel;
+						return !channel.name.startsWith('archive-');
+					}
 				}
 			]
 		});
@@ -54,16 +60,18 @@ export class ArchiveCommand extends Commando.Command {
 	}
 
 	async run(msg, args) {
-		const channel = args.channel;
-		const archiveCategory = msg.guild.channels.get(config.archiveCategoryId) as TextChannel;
-		const editData = {
-			name: `archive-${channel.name}`,
-			parentID: archiveCategory.id,
-			lockPermissions: true
-		};
-		await channel.edit(editData);
-		await channel.lockPermissions([], 'Archiving channel');
-		return channel.send(`${channel.toString()} archived on ${new Date().toISOString()}`);
+		for (const channel of args.channel) {
+			const archiveCategory = msg.guild.channels.get(config.archiveCategoryId) as TextChannel;
+			const editData = {
+				name: `archive-${channel.name}`,
+				parentID: archiveCategory.id,
+				lockPermissions: true
+			};
+			await channel.edit(editData, `Archive requested by ${msg.author.tag}`);
+			await channel.lockPermissions([], `Archive requested by ${msg.author.tag}`);
+			await channel.send(`${channel.toString()} archived on ${new Date().toISOString()} by ${msg.author.tag} (${msg.author.toString()})`);
+		}
+		return msg.channel.send(`${args.channel.join(', ')} archived`);
 	}
 
 }
