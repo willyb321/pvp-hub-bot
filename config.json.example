@@ -3,7 +3,7 @@
 	"allowedUsers": [],
 	"allowedChannels": [],
 	"allowedServers": [],
-	"modChannel: "",
+	"modChannel": "",
 	"paradigmID": "",
 	"token": "",
 	"muteMS": 30000,
