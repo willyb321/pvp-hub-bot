@@ -8,13 +8,14 @@
 import 'source-map-support/register';
 import * as Commando from 'discord.js-commando';
 import * as Raven from 'raven';
-import * as consola from 'consola';
+import consola from 'consola';
 import {config, currentStatus, figureOutTeams, writeLog} from './utils';
 import {basename, join} from 'path';
 import * as sqlite from 'sqlite';
 import {oneLine} from 'common-tags';
 import {TextChannel} from 'discord.js';
 import {updateQueues} from './queuesUpdate';
+import {CommandoGuild} from "discord.js-commando";
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true,
@@ -45,8 +46,7 @@ process.on('unhandledRejection', (err: Error) => {
 // Create an instance of a Discord client
 export const client = new Commando.CommandoClient({
 	owner: config.ownerID,
-	commandPrefix: '?',
-	unknownCommandResponse: false
+	commandPrefix: '?'
 });
 
 client
@@ -103,27 +103,33 @@ client.on('ready', async () => {
 		console.error(err);
 		Raven.captureException(err);
 	}
-	setTimeout(setUpLobbies, 1000);
+	for (const i of client.guilds.array()) {
+		setTimeout((i: any) => setUpLobbies(i.id), 1000, i);
+	}
 });
 
-client.on('guildMemberAdd',member => {
-	const channel = member.guild.channels.get(config.botLogID) as TextChannel;
+client.on('guildMemberAdd',async member => {
+	const guild = client.guilds.get(member.guild.id) as CommandoGuild;
+	const channelID = await guild.settings.get('botLogChannelID', '');
+	const channel = client.channels.get(channelID) as TextChannel;
 	if (!channel) {
 		return;
 	}
-	channel.send(`<@${member.id}> joined the server`);
+	await channel.send(`<@${member.id}> [ID: ${member.id}] joined the server`);
 });
 
-client.on('guildMemberRemove',member => {
-	const channel = member.guild.channels.get(config.botLogID) as TextChannel;
+client.on('guildMemberRemove',async member => {
+	const guild = client.guilds.get(member.guild.id) as CommandoGuild;
+	const channelID = await guild.settings.get('botLogChannelID', '');
+	const channel = client.channels.get(channelID) as TextChannel;
 	if (!channel) {
 		return;
 	}
-	channel.send(`${member.displayName} left the server`);
+	await channel.send(`${member.user.tag} [ID: ${member.id}] left the server`);
 });
 
-async function setUpLobbies() {
-	const guild = client.guilds.get(config.allowedServers[0]);
+async function setUpLobbies(guildID: string) {
+	const guild = client.guilds.get(guildID);
 	if (!guild || !guild.available) {
 		return;
 	}
@@ -136,7 +142,7 @@ async function setUpLobbies() {
 			}
 			let msg;
 			if (!isNaN(figureOutTeams(channel))) {
-				currentStatus.currentUsers.set(channel.id, []);
+				currentStatus.guilds.get(guildID).currentUsers.set(channel.id, []);
 			}
 			try {
 				if (channel && channel.lastMessageID) {
@@ -153,7 +159,7 @@ async function setUpLobbies() {
 			}
 
 		});
-		updateQueues()
+		updateQueues(guildID)
 			.then(() => {
 
 			})

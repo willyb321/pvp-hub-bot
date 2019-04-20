@@ -139,3 +139,5 @@ docs/
 config.*.json
 \.idea/
 settings.sqlite3
+
+config\.json

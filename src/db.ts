@@ -47,6 +47,7 @@ export interface IParticipants {
 	discordTag: string;
 }
 
+
 const matchSchema = new mongoose.Schema({
     nanoid: {type: String, default: nanoid(12), required: true}, // 12char id eg Uakgb_J5m9g~0JDMbcJqLJ
     lobby: {type: String, required: true}, // channel name eg 2v2_home
@@ -56,7 +57,8 @@ const matchSchema = new mongoose.Schema({
 	teamSelectionSec: {type: Number, required: true}, // Time (in sec) spent from initial teams to teams being locked in.
 	participants: {type: [participantsSchema]},
 	matchNum: {type: Number, default: 0, index: true},
-	rerollCount: {type: Number, default: 0}
+	rerollCount: {type: Number, default: 0},
+	guildID: {type: String, required: true, index: true},
 });
 
 export interface IMatch {
@@ -88,7 +90,7 @@ const counter = mongoose.model('counter', CounterSchema);
 
 matchSchema.pre('save', function (next) {
     const doc: any = this;
-    counter.findByIdAndUpdate({_id: 'MatchId'}, {$inc: {seq: 1}}, {upsert: true}, async function (error: Error, counter: any)   {
+    counter.findByIdAndUpdate({_id: `MatchId_`}, {$inc: {seq: 1}}, {upsert: true}, async function (error: Error, counter: any)   {
         if (error) {
             return next(error);
 		}

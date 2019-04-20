@@ -1,11 +1,10 @@
 {
-	"allowedRoles": [],
-	"allowedUsers": [],
-	"allowedChannels": [],
-	"allowedServers": [],
-	"modChannel": "",
-	"paradigmID": "",
 	"token": "",
-	"muteMS": 30000,
-	"stfuInteral": 60000
+	"mongoURL": "",
+	"ravenDSN": "",
+	"pastebinKey": "",
+	"redditClientId": "",
+	"redditClientSecret": "",
+	"redditRefreshToken": "",
+	"ownerID": [""]
 }

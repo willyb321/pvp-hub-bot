@@ -47,13 +47,10 @@ export class NewCommand extends Commando.Command {
 		if (!message.member) {
 			return false;
 		}
-		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			return true;
-		}
-		if (!currentStatus.currentUsers.has(message.channel.id)) {
+		if (!currentStatus.guilds.get(message.guild.id).currentUsers.has(message.channel.id)) {
 			return false;
 		}
-		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
+		return !!currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
 
 	}
 	async run(message) {
