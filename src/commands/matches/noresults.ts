@@ -48,9 +48,6 @@ export class NoResultsCommand extends Commando.Command {
 	}
 
 	async run(message) {
-		if (!config.allowedChannels.includes(message.channel.id)) {
-			return;
-		}
 		console.time('Start query');
 		return Match.find({result: 12})
 			.then((res: IMatchDoc[]) => {

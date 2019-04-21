@@ -39,7 +39,7 @@ export class StatusCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		return !(!msg.member || !msg.member.roles.find(elem => config.allowedRoles.includes(elem.id)));
+		return false
 	}
 
 	async run(msg, args) {

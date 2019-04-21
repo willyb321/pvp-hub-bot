@@ -45,14 +45,6 @@ export class TeamsCommand extends Commando.Command {
 		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
-		if (!config.allowedChannels.includes(message.channel.id)) {
-			return false;
-		}
-		if (!currentStatus.currentUsers.has(message.channel.id)) {
-			return false;
-		}
-		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
-
 	}
 
 	async run(message) {

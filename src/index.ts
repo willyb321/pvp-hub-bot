@@ -181,8 +181,10 @@ client.on('message', message => {
 client.registry
 	.registerGroup('matches', 'Matches')
 	.registerGroup('misc', 'Misc')
+	.registerGroup('admin', 'Admin')
 	.registerDefaults()
 	.registerCommandsIn(join(__dirname, 'commands', 'matches'))
+	.registerCommandsIn(join(__dirname, 'commands', 'admin'))
 	.registerCommandsIn(join(__dirname, 'commands', 'misc'));
 
 // Log our bot in

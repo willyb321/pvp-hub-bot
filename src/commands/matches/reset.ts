@@ -5,7 +5,6 @@
  * ignore
  */
 import {currentStatus, config, reset} from '../../utils';
-import {collectors} from '../../utils';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
 import * as Raven from 'raven';

@@ -45,14 +45,7 @@ export class FlipCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		if (!msg.member) {
-			return false;
-		}
-		if (msg.member.roles.find(elem => config.flipRoles.includes(elem.id))) {
-			return true;
-		} else {
-			return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
-		}
+		return true;
 	}
 
 	async run(msg) {

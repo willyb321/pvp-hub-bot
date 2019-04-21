@@ -13,7 +13,7 @@ import {TextChannel, Message} from 'discord.js';
 import {CommandoGuild} from "discord.js-commando";
 
 export async function updateQueues(guildID: string) {
-	const guild: CommandoGuild = client.guilds.get(guildID);
+	const guild: any = client.guilds.get(guildID);
 	if (!guild) {
 		return;
 	}

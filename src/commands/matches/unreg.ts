@@ -43,36 +43,33 @@ export class UnregCommand extends Commando.Command {
 		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
-		if (!config.allowedChannels.includes(message.channel.id)) {
+		if (!currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
 			return false;
 		}
-		if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
-			return false;
-		}
-		return !!currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
+		return !!currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id);
 
 	}
 
 	async run(message) {
-		currentStatus.currentUsers.set(message.channel.id, _.uniq(currentStatus.currentUsers.get(message.channel.id)));
-		if (currentStatus.currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
-			_.remove(currentStatus.currentUsers.get(message.channel.id), elem => elem.id === message.author.id);
+		currentStatus.guilds.get(message.guild.id).currentUsers.set(message.channel.id, _.uniq(currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id)));
+		if (currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).find(elem => elem.id === message.author.id)) {
+			_.remove(currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id), elem => elem.id === message.author.id);
 			console.log(`Unregistered ${message.member.displayName} from #${message.channel.name}.`);
-			if (currentStatus.currentUsers.get(message.channel.id).length === 0) {
-				currentStatus.queueStartTimes.delete(message.channel.id);
+			if (currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).length === 0) {
+				currentStatus.guilds.get(message.guild.id).queueStartTimes.delete(message.channel.id);
 			}
-			if (currentStatus.teams.has(message.channel.id) && currentStatus.teams.get(message.channel.id).length === 2) {
-				currentStatus.teams.delete(message.channel.id);
-				currentStatus.queueTeamTimes.delete(message.channel.id);
-				currentStatus.teamsNumber.delete(message.channel.id);
-				currentStatus.rerollCount.delete(message.channel.id);
-				currentStatus.teamMessage.delete(message.channel.id);
+			if (currentStatus.guilds.get(message.guild.id).teams.has(message.channel.id) && currentStatus.guilds.get(message.guild.id).teams.get(message.channel.id).length === 2) {
+				currentStatus.guilds.get(message.guild.id).teams.delete(message.channel.id);
+				currentStatus.guilds.get(message.guild.id).queueTeamTimes.delete(message.channel.id);
+				currentStatus.guilds.get(message.guild.id).teamsNumber.delete(message.channel.id);
+				currentStatus.guilds.get(message.guild.id).rerollCount.delete(message.channel.id);
+				currentStatus.guilds.get(message.guild.id).teamMessage.delete(message.channel.id);
 			}
-			if (currentStatus.timeouts.has(message.channel.id) && currentStatus.currentUsers.get(message.channel.id).length === 0) {
-				clearTimeout(currentStatus.timeouts.get(message.channel.id));
-				currentStatus.timeouts.delete(message.channel.id);
+			if (currentStatus.guilds.get(message.guild.id).timeouts.has(message.channel.id) && currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).length === 0) {
+				clearTimeout(currentStatus.guilds.get(message.guild.id).timeouts.get(message.channel.id));
+				currentStatus.guilds.get(message.guild.id).timeouts.delete(message.channel.id);
 			}
-			updateQueues()
+			updateQueues(message.guild.id)
 				.then(() => {
 
 				})

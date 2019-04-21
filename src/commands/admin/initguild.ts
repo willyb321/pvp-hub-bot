@@ -67,6 +67,7 @@ export class InitGuildCommand extends Commando.Command {
 		await msg.guild.settings.set('logLeaves', logLeaves);
 		await msg.guild.settings.set('botLogChannelID', botLogID);
 		await msg.guild.settings.set('queueChannelID', queueChannelID);
+		// await msg.guild.settings.set('archiveCategoryID', queueChannelID);
 		initGuildStatus(guildID);
 		return botLog(`Now logging in this channel`, msg.guild);
 	}

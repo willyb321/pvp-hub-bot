@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {collectors, config, currentStatus, resetCounters} from '../../utils';
+import {config, currentStatus, resetCounters} from '../../utils';
 import * as Raven from 'raven';
 import * as Commando from 'discord.js-commando';
 import {basename} from 'path';
@@ -56,16 +56,16 @@ export class PremadeCommand extends Commando.Command {
 		if (!message.channel || !message.channel.id) {
 			return false;
 		}
-		if (currentStatus.premadeHappening === true) {
+		if (currentStatus.guilds.get(message.guild.id).premadeHappening === true) {
 			return false;
 		}
-		return message.channel.id === config.premadeChannelId;
+		return message.channel.name === 'premade';
 	}
 
 	async run(message, args) {
 		const teamsNumber = args.teamsNumber;
 
-		currentStatus.premadeHappening = true;
+		currentStatus.guilds.get(message.guild.id).premadeHappening = true;
 		const text = `Premade for ${message.channel.toString()}:\n`;
 		let t1 = 'Team 1:\n';
 		let t2 = 'Team 2:\n';
@@ -85,7 +85,7 @@ export class PremadeCommand extends Commando.Command {
 			const filterOne = (reaction, user) => reaction.emoji.name === reaction_numbers[1] && user.id !== message.client.user.id;
 			const addone = new Discord.ReactionCollector(msg, filter, {dispose: true});
 			const stop = new Discord.ReactionCollector(msg, filterStop, {maxUsers: teamsNumber});
-			currentStatus.queueStartTimes.set(msg.channel.id, new Date());
+			currentStatus.guilds.get(message.guild.id).queueStartTimes.set(msg.channel.id, new Date());
 			stop.on('end', async (reactions, reason) => {
 				if (reason === 'cleanup') {
 					return;
@@ -93,7 +93,7 @@ export class PremadeCommand extends Commando.Command {
 				addone.stop('cancelled');
 				await msg.delete();
 				await message.channel.send('Premade cancelled.');
-				currentStatus.premadeHappening = false;
+				currentStatus.guilds.get(message.guild.id).premadeHappening = false;
 			});
 			addone.on('remove', async (reaction, user) => {
 				let what = 0;
@@ -145,7 +145,7 @@ export class PremadeCommand extends Commando.Command {
 				t1 = `Team 1:\n${teamsToUse[0].join('\n')}\n`;
 				t2 = `Team 2:\n${teamsToUse[1].join('\n')}\n`;
 				await message.channel.send(`${text}\n${t1}\n${t2}`);
-				currentStatus.teams.set(message.channel.id, teamsToUse);
+				currentStatus.guilds.get(message.guild.id).teams.set(message.channel.id, teamsToUse);
 				console.log(`Approve collector ended with reason: ${reason}`);
 				const curTime = Math.floor(new Date().getSeconds());
 				const timeToTeam = Math.abs(curTime - curTime);
@@ -158,7 +158,7 @@ export class PremadeCommand extends Commando.Command {
 					console.log(err);
 					Raven.captureException(err);
 				}
-				currentStatus.teams.get(msg.channel.id).forEach((elem, ind) => {
+				currentStatus.guilds.get(message.guild.id).teams.get(msg.channel.id).forEach((elem, ind) => {
 					elem.forEach(user => {
 						participants.push({id: user.id, team: ind + 1, discordTag: user.tag});
 					});
@@ -166,7 +166,7 @@ export class PremadeCommand extends Commando.Command {
 				const matchInfo: IMatch = {
 					nanoid: nanoid(12),
 					lobby: lobby || 'unknown',
-					startQueue: currentStatus.queueStartTimes.has(msg.channel.id) ? currentStatus.queueStartTimes.get(msg.channel.id).toISOString() : new Date().toISOString(),
+					startQueue: currentStatus.guilds.get(message.guild.id).queueStartTimes.has(msg.channel.id) ? currentStatus.guilds.get(message.guild.id).queueStartTimes.get(msg.channel.id).toISOString() : new Date().toISOString(),
 					filledTime: new Date().toISOString(),
 					result: 12,
 					rerollCount: 0,
@@ -179,12 +179,12 @@ export class PremadeCommand extends Commando.Command {
 					.then((savedDoc: IMatchDoc) => {
 						console.log(`Match #${savedDoc.matchNum} locked in.`);
 						msg.channel.send(`Teams locked in. Match ID: ${savedDoc.matchNum}\n${teamsToUse[0].join(' ')} ${teamsToUse[1].join(' ')}`);
-						currentStatus.queueTeamTimes.delete(msg.channel.id);
+						currentStatus.guilds.get(message.guild.id).queueTeamTimes.delete(msg.channel.id);
 						if (savedDoc.matchNum % 100 === 0 || savedDoc.matchNum % 50 === 0) {
-							const botLogChannel = client.channels.get(config.botLogID) as Discord.TextChannel;
-							const logToBotSpam = msg => botLogChannel.send(msg);
-							const announce = `Match ${savedDoc.matchNum} reached on ${new Date().toISOString()}`;
-							logToBotSpam(announce);
+							// const botLogChannel = client.channels.get(config.botLogID) as Discord.TextChannel;
+							// const logToBotSpam = msg => botLogChannel.send(msg);
+							// const announce = `Match ${savedDoc.matchNum} reached on ${new Date().toISOString()}`;
+							// logToBotSpam(announce);
 						}
 					})
 					.catch(err => {
@@ -192,13 +192,13 @@ export class PremadeCommand extends Commando.Command {
 						Raven.captureException(err);
 					});
 
-				currentStatus.locked.set(msg.channel.id, true);
-				collectors.forEach(elem => elem.stop('cleanup'));
+				currentStatus.guilds.get(message.guild.id).locked.set(msg.channel.id, true);
+				currentStatus.guilds.get(message.guild.id).collectors.forEach(elem => elem.stop('cleanup'));
 				const timeout = setTimeout(() => {
 					resetCounters(msg);
 				}, 3000);
-				currentStatus.premadeHappening = false;
-				currentStatus.timeouts.set(msg.channel.id, timeout);
+				currentStatus.guilds.get(message.guild.id).premadeHappening = false;
+				currentStatus.guilds.get(message.guild.id).timeouts.set(msg.channel.id, timeout);
 			});
 		} catch (err) {
 			console.error(err);

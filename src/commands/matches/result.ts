@@ -62,17 +62,9 @@ export class ResultCommand extends Commando.Command {
 		if (!message || !message.member) {
 			return false
 		}
-		if (!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			return false;
-		}
 		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
-		if (!config.allowedChannels.includes(message.channel.id)) {
-			return false;
-		}
-		return !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id));
-
 	}
 
 	async run(message, args) {

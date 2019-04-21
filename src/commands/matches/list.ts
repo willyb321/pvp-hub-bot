@@ -43,34 +43,34 @@ export class WhoCommand extends Commando.Command {
 		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
-		return config.allowedChannels.includes(message.channel.id);
+		return false
 	}
 
 	async run(message) {
-		if (!currentStatus.currentUsers.has(message.channel.id)) {
-			currentStatus.currentUsers.set(message.channel.id, []);
+		if (!currentStatus.guilds.get(message.guild.id).currentUsers.has(message.channel.id)) {
+			currentStatus.guilds.get(message.guild.id).currentUsers.set(message.channel.id, []);
 		}
 
 		let counts: any = [];
-		for (const [key, val] of currentStatus.currentUsers) {
+		for (const [key, val] of currentStatus.guilds.get(message.guild.id).currentUsers) {
 			let teamsNumber: number;
 			try {
 				if (message.channel.type !== 'text') {
 					return;
 				}
-				const channel = client.guilds.get(config.allowedServers[0]).channels.get(key);
+				const channel = client.guilds.get(message.guild.id).channels.get(key);
 				teamsNumber = parseInt(channel.name.split('v')[0]);
 			} catch (err) {
 				console.log(err);
 				Raven.captureException(err);
 			}
-			currentStatus.teamsNumber.set(key, teamsNumber);
+			currentStatus.guilds.get(message.guild.id).teamsNumber.set(key, teamsNumber);
 			counts.push({channel: key, count: val.length});
 		}
-		counts = counts.sort((a, b) => client.guilds.get(config.allowedServers[0]).channels.get(a.channel).name > client.guilds.get(config.allowedServers[0]).channels.get(b.channel).name === true);
+		counts = counts.sort((a, b) => client.guilds.get(message.guild.id).channels.get(a.channel).name > client.guilds.get(message.guild.id).channels.get(b.channel).name === true);
 		let embedString = '';
 		counts.forEach(elem => {
-			embedString += `<#${elem.channel}> - ${elem.count} / ${currentStatus.teamsNumber.get(elem.channel) * 2}\n`;
+			embedString += `<#${elem.channel}> - ${elem.count} / ${currentStatus.guilds.get(message.guild.id).teamsNumber.get(elem.channel) * 2}\n`;
 		});
 		const embed = genEmbed('Current Queues:', embedString);
 

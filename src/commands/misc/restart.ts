@@ -40,13 +40,7 @@ export class RestartCommand extends Commando.Command {
 	}
 
 	hasPermission(msg) {
-		if (client.isOwner(msg.author)) {
-			return true;
-		}
-		if (!msg.member) {
-			return false;
-		}
-		return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
+		return client.isOwner(msg.author);
 
 	}
 

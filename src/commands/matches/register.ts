@@ -44,26 +44,26 @@ export class RegisterCommand extends Commando.Command {
 		return !isNaN(figureOutTeams(message.channel));
 	}
 	async run(message) {
-		if (!currentStatus.currentUsers.has(message.channel.id)) {
-			currentStatus.currentUsers.set(message.channel.id, []);
+		if (!currentStatus.guilds.get(message.guild.id).currentUsers.has(message.channel.id)) {
+			currentStatus.guilds.get(message.guild.id).currentUsers.set(message.channel.id, []);
 		}
-		if (!currentStatus.queueStartTimes.has(message.channel.id)) {
-			currentStatus.queueStartTimes.set(message.channel.id, new Date());
+		if (!currentStatus.guilds.get(message.guild.id).queueStartTimes.has(message.channel.id)) {
+			currentStatus.guilds.get(message.guild.id).queueStartTimes.set(message.channel.id, new Date());
 		}
-		const teamsNumber = currentStatus.teamsNumber.get(message.channel.id);
+		const teamsNumber = currentStatus.guilds.get(message.guild.id).teamsNumber.get(message.channel.id);
 		if (!teamsNumber) {
 			const teamsNumber = figureOutTeams(message.channel);
-			currentStatus.teamsNumber.set(message.channel.id, teamsNumber);
+			currentStatus.guilds.get(message.guild.id).teamsNumber.set(message.channel.id, teamsNumber);
 		}
-		if (!currentStatus.teams.has(message.channel.id)) {
-			currentStatus.teams.set(message.channel.id, []);
+		if (!currentStatus.guilds.get(message.guild.id).teams.has(message.channel.id)) {
+			currentStatus.guilds.get(message.guild.id).teams.set(message.channel.id, []);
 		}
 
-		if (currentStatus.currentUsers.get(message.channel.id).length >= teamsNumber * 2) {
+		if (currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).length >= teamsNumber * 2) {
 			return message.reply('Full!');
-		} else if (!currentStatus.currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
-			currentStatus.currentUsers.get(message.channel.id).push(message.author);
-			updateQueues()
+		} else if (!currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
+			currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).push(message.author);
+			updateQueues(message.guild.id)
 				.then(() => {
 
 				})
@@ -71,25 +71,25 @@ export class RegisterCommand extends Commando.Command {
 					console.error(err);
 					Raven.captureException(err);
 				});
-			message.reply(`Added to the session\nCurrently registered: ${currentStatus.currentUsers.get(message.channel.id).length} / ${currentStatus.teamsNumber.get(message.channel.id) * 2}`);
-			if (currentStatus.timeouts.has(message.channel.id)) {
-				clearTimeout(currentStatus.timeouts.get(message.channel.id));
-				currentStatus.timeouts.delete(message.channel.id);
+			await message.reply(`Added to the session\nCurrently registered: ${currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).length} / ${currentStatus.guilds.get(message.guild.id).teamsNumber.get(message.channel.id) * 2}`);
+			if (currentStatus.guilds.get(message.guild.id).timeouts.has(message.channel.id)) {
+				clearTimeout(currentStatus.guilds.get(message.guild.id).timeouts.get(message.channel.id));
+				currentStatus.guilds.get(message.guild.id).timeouts.delete(message.channel.id);
 			}
 			const timeout = setTimeout(() => {
 				resetCounters(message);
 			}, 5400000);
-			currentStatus.timeouts.set(message.channel.id, timeout);
-			if (currentStatus.currentUsers.get(message.channel.id).length === teamsNumber * 2) {
-				message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.currentUsers.get(message.channel.id).join(' ')}`);
-				if (currentStatus.timeouts.has(message.channel.id)) {
-					clearTimeout(currentStatus.timeouts.get(message.channel.id));
-					currentStatus.timeouts.delete(message.channel.id);
+			currentStatus.guilds.get(message.guild.id).timeouts.set(message.channel.id, timeout);
+			if (currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).length === teamsNumber * 2) {
+				message.channel.send(`Initial Teams Ready. Pinging.\n${currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).join(' ')}`);
+				if (currentStatus.guilds.get(message.guild.id).timeouts.has(message.channel.id)) {
+					clearTimeout(currentStatus.guilds.get(message.guild.id).timeouts.get(message.channel.id));
+					currentStatus.guilds.get(message.guild.id).timeouts.delete(message.channel.id);
 				}
 				teams(message);
 			}
 			return;
-		} else if (currentStatus.currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
+		} else if (currentStatus.guilds.get(message.guild.id).currentUsers.get(message.channel.id).find(elem => elem === message.author)) {
 			return message.reply('Already in the session.');
 		}
 	}

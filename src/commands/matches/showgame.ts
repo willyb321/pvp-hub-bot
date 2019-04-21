@@ -52,7 +52,6 @@ export class ShowGameCommand extends Commando.Command {
 		if (!isNaN(figureOutTeams(message.channel))) {
 			return true;
 		}
-		return config.allowedChannels.includes(message.channel.id);
 	}
 
 	async run(message, args) {

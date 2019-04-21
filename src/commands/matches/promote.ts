@@ -43,13 +43,13 @@ export class PromoteCommand extends Commando.Command {
 		if (!isNaN(figureOutTeams(msg.channel)) && figureOutTeams(msg.channel) === 1) {
 			return false;
 		}
-		if (!currentStatus.currentUsers.has(msg.channel.id)) {
+		if (!currentStatus.guilds.get(msg.guild.id).currentUsers.has(msg.channel.id)) {
 			return false;
 		}
-		return !!currentStatus.currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id);
+		return !!currentStatus.guilds.get(msg.guild.id).currentUsers.get(msg.channel.id).find(elem => elem.id === msg.author.id);
 	}
 	async run(msg, args) {
-		if (!currentStatus.teamsNumber.has(msg.channel.id)) {
+		if (!currentStatus.guilds.get(msg.guild.id).teamsNumber.has(msg.channel.id)) {
 			let teamsNumber: number;
 			try {
 				if (msg.channel.type !== 'text') {
@@ -64,10 +64,10 @@ export class PromoteCommand extends Commando.Command {
 			if (!teamsNumber) {
 				teamsNumber = 2;
 			}
-			currentStatus.teamsNumber.set(msg.channel.id, teamsNumber);
+			currentStatus.guilds.get(msg.guild.id).teamsNumber.set(msg.channel.id, teamsNumber);
 		}
-		const max = currentStatus.teamsNumber.get(msg.channel.id) * 2;
-		const current = currentStatus.currentUsers.get(msg.channel.id).length;
+		const max = currentStatus.guilds.get(msg.guild.id).teamsNumber.get(msg.channel.id) * 2;
+		const current = currentStatus.guilds.get(msg.guild.id).currentUsers.get(msg.channel.id).length;
 
 		const mesg = `@here only ${max - current} needed for ${msg.channel.toString()}`;
 		return msg.channel.send(mesg);
